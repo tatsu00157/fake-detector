@@ -16,6 +16,9 @@
 - `src/components/UploadZone.tsx` — ドラッグ＆ドロップ対応アップロードUI
 - `src/pages/Home.tsx` — ホームページ（モード切替・アップロード・プレビュー）
 - `tsconfig.json` — `target: es2020`、`moduleResolution: bundler` に修正済み
+- `src/types/analysis.ts` — 解析結果の型定義
+- `src/components/AnalysisCard.tsx` — 解析項目カード（スコアバー・詳細展開）
+- `src/components/ResultsDashboard.tsx` — 解析結果一覧（総合判定・AI生成・人為的加工・情報）
 
 ## プロジェクト概要
 
