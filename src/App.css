@@ -1,38 +1,197 @@
-.App {
-  text-align: center;
+/* ===== Reset & Base ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f8fafc;
+  color: #1e293b;
+  line-height: 1.6;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+/* ===== App Shell ===== */
+.app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+/* ===== Header ===== */
+.header {
+  background: #0f172a;
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.header-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  height: 56px;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+
+.header-logo {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #f8fafc;
+  letter-spacing: -0.02em;
+}
+
+.header-nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.header-nav a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.15s;
+}
+
+.header-nav a:hover {
+  color: #f8fafc;
+}
+
+/* ===== Home ===== */
+.home {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  flex: 1;
+}
+
+.home__hero {
+  text-align: center;
+  padding: 3rem 0 2rem;
+}
+
+.home__title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.03em;
+}
+
+.home__desc {
+  font-size: 1.05rem;
+  color: #64748b;
+  margin-bottom: 1.5rem;
+}
+
+/* ===== Mode Toggle ===== */
+.mode-toggle {
+  display: inline-flex;
+  background: #e2e8f0;
+  border-radius: 8px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.mode-toggle__btn {
+  padding: 0.4rem 1.2rem;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.15s;
+}
+
+.mode-toggle__btn--active {
+  background: #fff;
+  color: #0f172a;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== Upload Zone ===== */
+.home__upload {
+  margin: 2rem 0;
+}
+
+.upload-zone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  text-align: center;
+  background: #fff;
+  transition: border-color 0.2s, background 0.2s;
+  position: relative;
+}
+
+.upload-zone--dragging {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.upload-zone--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.upload-zone__input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.upload-zone__label {
+  display: block;
+  cursor: pointer;
+}
+
+.upload-zone__icon {
+  display: block;
+  font-size: 2.5rem;
+  color: #94a3b8;
+  margin-bottom: 0.75rem;
+}
+
+.upload-zone__label p {
+  font-size: 1rem;
+  color: #475569;
+  margin-bottom: 0.25rem;
+}
+
+.upload-zone__sub {
+  font-size: 0.85rem !important;
+  color: #94a3b8 !important;
+}
+
+/* ===== Preview ===== */
+.preview {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  flex-wrap: wrap;
 }
 
-.App-link {
-  color: #61dafb;
+.preview__img {
+  max-height: 160px;
+  max-width: 280px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 2px solid #e2e8f0;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  .home__title {
+    font-size: 1.7rem;
   }
 }
