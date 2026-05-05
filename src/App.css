@@ -426,23 +426,27 @@ body {
   word-break: break-all;
 }
 
-/* ===== Reset Button ===== */
-.reset-btn {
-  display: block;
-  margin: 0.75rem auto 0;
-  padding: 0.4rem 1.2rem;
-  background: transparent;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  color: #64748b;
-  cursor: pointer;
-  transition: all 0.15s;
+/* ===== Delete Button ===== */
+.upload-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
 }
 
-.reset-btn:hover {
-  background: #f1f5f9;
-  color: #1e293b;
+.delete-btn {
+  padding: 0.4rem 1rem;
+  background: #ef4444;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.delete-btn:hover {
+  background: #dc2626;
 }
 
 /* ===== Responsive ===== */

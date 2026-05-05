@@ -89,6 +89,12 @@ export default function Home() {
       </div>
 
       <div className="home__upload">
+        {previews.length > 0 && (
+          <div className="upload-actions">
+            <button className="delete-btn" onClick={handleReset}>削除</button>
+          </div>
+        )}
+
         <UploadZone onFileSelect={handleFiles} mode={mode} disabled={loading} />
 
         {previews.length > 0 && (
@@ -96,7 +102,6 @@ export default function Home() {
             {previews.map((url, i) => (
               <img key={i} src={url} alt={`preview ${i + 1}`} className="preview__img" />
             ))}
-            <button className="reset-btn" onClick={handleReset}>リセット</button>
           </div>
         )}
 
