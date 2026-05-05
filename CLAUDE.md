@@ -35,7 +35,8 @@
 - `backend/services/ai_features_service.py` — エッジシャープネス・カラーパレット解析（アニメAI検出）
 - AI判定スコアを4指標（Exif・FFT・ピクセル統計・AIフィーチャー）の平均に更新
 - 総合判定をAI生成スコアと人為的加工スコアに分離
-- `backend/services/manipulation_service.py` — ヒストグラムギャップ・クリッピング・彩度異常でスマホ加工を検出（クローンスタンプ検出を置き換え）
+- `backend/services/manipulation_service.py` — ヒストグラムギャップのみで加工を検出（レベル補正・コントラスト調整の痕跡）
+- `pixel_stats_service.py` — 彩度シグナルを削除（加工画像のAI誤検知を防ぐため）
 
 ## プロジェクト概要
 

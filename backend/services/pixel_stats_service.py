@@ -72,31 +72,27 @@ def analyze(image_bytes: bytes) -> dict:
         }
         stats = {name: _channel_stats(ch) for name, ch in channels.items()}
 
-        noise      = _noise_level(arr)
-        saturation = _saturation(arr)
-        flatness   = _color_flatness(arr)
+        noise    = _noise_level(arr)
+        flatness = _color_flatness(arr)
 
-        stat_suspicious = sum(
+        stat_suspicious  = sum(
             1 for ch in stats.values()
             if ch["entropy"] > 7.0 and abs(ch["skewness"]) < 0.5
         )
-        noise_suspicious   = noise < 2.5
-        sat_suspicious     = saturation > 0.45
-        flat_suspicious    = flatness < 800
+        noise_suspicious = noise < 2.5    # 実写は通常2以上、AI画像は不自然に低い
+        flat_suspicious  = flatness < 800 # アニメAIはフラットな塗りで局所分散が小さい
 
-        signal_count = stat_suspicious + (1 if noise_suspicious else 0) + (1 if sat_suspicious else 0) + (1 if flat_suspicious else 0)
-        score = min(signal_count / 5.0, 1.0)
+        signal_count = stat_suspicious + (1 if noise_suspicious else 0) + (1 if flat_suspicious else 0)
+        score = min(signal_count / 4.0, 1.0)
 
-        r, g, b = channels["red"], channels["green"], channels["blue"]
         return {
             "score": float(score),
             "label": get_label(score),
             "details": {
                 "noise_level": round(noise, 3),
-                "saturation_level": round(saturation, 3),
                 "color_flatness": round(flatness, 1),
                 "suspicious_signals": signal_count,
-                "note": "ノイズが低い・彩度が高い・色がフラットな場合はAI生成の可能性があります",
+                "note": "ノイズが低い・色がフラットな場合はAI生成の可能性があります",
             },
             "image": None,
         }
