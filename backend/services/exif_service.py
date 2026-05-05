@@ -46,10 +46,13 @@ def analyze(image_bytes: bytes) -> dict:
 
         ai_signatures = [t for t in AI_TOOL_SIGNATURES if t in all_values]
 
-        # 全フィールドを値あり・なし問わず表示
+        # 既知フィールドは日本語ラベルで、残りはそのまま全て表示
         metadata = {}
         for field, label in CAMERA_FIELD_LABELS.items():
             metadata[label] = raw_tags[field] if field in raw_tags else "なし"
+        for field, value in raw_tags.items():
+            if field not in CAMERA_FIELD_LABELS:
+                metadata[field] = value
 
         core_fields = ["Image Make", "Image Model", "EXIF ExposureTime", "EXIF ISOSpeedRatings", "EXIF FocalLength"]
         missing_count = sum(1 for f in core_fields if f not in raw_tags)
