@@ -39,7 +39,7 @@
 - 総合判定をAI生成スコアと加工スコアに分離
 
 ### フロントエンド（更新）
-- `src/components/ResultsDashboard.tsx` — 総合判定を%表示に変更（「可能性」ラベル廃止）、PRNUカード追加
+- `src/components/ResultsDashboard.tsx` — 表示カードをEXIF・ELA・PRNUの3枚に絞り込み。総合判定カード・FFT・ピクセル統計・AIフィーチャー・顔検出カード・セクションタイトルをすべて削除
 - `src/types/analysis.ts` — `prnu` フィールド追加
 
 ## プロジェクト概要
