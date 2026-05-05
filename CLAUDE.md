@@ -46,6 +46,17 @@
 ### フロントエンド（更新）
 - `src/components/ResultsDashboard.tsx` — AI生成検出（EXIF・テクスチャ分析・ノイズレベル解析）と加工検出（ELA・ノイズ残差マップ）でセクション分け。総合判定カードなし
 - `src/types/analysis.ts` — `prnu`・`texture`・`noise` フィールド追加
+- `src/lib/supabase.ts` — Supabaseクライアント
+- `src/context/AuthContext.tsx` — 認証状態管理（ログイン・ログアウト・セッション）
+- `src/pages/Login.tsx` — ログイン・新規登録ページ
+- `src/App.tsx` — React Router導入・認証保護ルート
+- `src/components/Header.tsx` — ログイン状態でユーザー表示・ログアウトボタン
+- `src/api/client.ts` — 全APIリクエストにSupabase JWTを付与
+
+### バックエンド（認証）
+- `backend/dependencies/auth.py` — JWT検証・無料利用回数チェック（1日10回）
+- `backend/routers/analysis.py` / `compare.py` — 認証依存関係を追加
+- `supabase/schema.sql` — usage_logsテーブル定義（Supabase SQLエディタで実行）
 
 ## プロジェクト概要
 

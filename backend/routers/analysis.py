@@ -1,10 +1,11 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 from services import (
     exif_service, ela_service, fft_service,
     pixel_stats_service, manipulation_service,
     face_service, ai_features_service, prnu_service,
     texture_service, noise_service,
 )
+from dependencies.auth import check_usage
 
 router = APIRouter(tags=["analysis"])
 
@@ -27,7 +28,7 @@ def _score_label(results: dict, keys: list) -> tuple:
 
 
 @router.post("/analyze")
-async def analyze_image(file: UploadFile = File(...)):
+async def analyze_image(file: UploadFile = File(...), _user=Depends(check_usage)):
     _validate(file)
     image_bytes = await file.read()
     if len(image_bytes) > MAX_BYTES:

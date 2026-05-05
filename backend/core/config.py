@@ -7,6 +7,8 @@ class Settings(BaseSettings):
 
     allowed_origins: List[str] = ["http://localhost:3000"]
     max_file_size_mb: int = 20
+    supabase_url: str = ""
+    supabase_service_role_key: str = ""
 
 
 settings = Settings()

@@ -9,6 +9,7 @@ imagehash==4.3.1
 scikit-image==0.24.0
 scipy==1.14.0
 python-dotenv==1.0.1
+supabase==2.7.4
 pydantic-settings==2.4.0
 c2pa-python==0.5.0
 invisible-watermark==0.2.0
