@@ -27,16 +27,20 @@
 - `backend/core/config.py` — 環境変数設定
 - `backend/routers/analysis.py` — `/api/v1/analyze` エンドポイント
 - `backend/services/exif_service.py` — Exifメタデータ解析・AIツール署名チェック
-- `backend/services/ela_service.py` — ELA解析
+- `backend/services/ela_service.py` — ELA解析（局所ホットスポット検出含む）
 - `backend/services/fft_service.py` — 周波数解析（FFT）
-- `backend/services/pixel_stats_service.py` — ピクセル統計解析
-- `backend/services/clone_detection_service.py` — クローンスタンプ検出
+- `backend/services/pixel_stats_service.py` — ピクセル統計解析（彩度シグナル削除済み・AI誤検知防止）
 - `backend/services/face_service.py` — 顔検出
 - `backend/services/ai_features_service.py` — エッジシャープネス・カラーパレット解析（アニメAI検出）
-- AI判定スコアを4指標（Exif・FFT・ピクセル統計・AIフィーチャー）の平均に更新
-- 総合判定をAI生成スコアと人為的加工スコアに分離
-- `backend/services/manipulation_service.py` — ヒストグラムギャップのみで加工を検出（レベル補正・コントラスト調整の痕跡）
-- `pixel_stats_service.py` — 彩度シグナルを削除（加工画像のAI誤検知を防ぐため）
+- `backend/services/prnu_service.py` — ノイズ残差マップ（PRNUベース）で合成・切り貼り箇所を可視化
+- `backend/services/manipulation_service.py` — ノイズCoV検出（スコア計算には未使用）
+- AI判定スコア：4指標（Exif・FFT・ピクセル統計・AIフィーチャー）の平均
+- 加工判定スコア：2指標（ELA・PRNU）の平均
+- 総合判定をAI生成スコアと加工スコアに分離
+
+### フロントエンド（更新）
+- `src/components/ResultsDashboard.tsx` — 総合判定を%表示に変更（「可能性」ラベル廃止）、PRNUカード追加
+- `src/types/analysis.ts` — `prnu` フィールド追加
 
 ## プロジェクト概要
 

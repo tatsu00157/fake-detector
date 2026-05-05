@@ -4,41 +4,50 @@ from PIL import Image
 from .base import get_label, error_result
 
 
-def _histogram_gaps(channel: np.ndarray) -> float:
-    """ヒストグラムのギャップ検出。レベル補正・コントラスト調整で空白ビンが生まれる。
-    実際のカメラはこのギャップを作らないため、編集の痕跡として有効。"""
-    hist, _ = np.histogram(channel, bins=256, range=(0, 256))
-    # 端の黒潰れ・白飛び領域を除いた中間域のゼロビン数
-    mid = hist[10:246]
-    gap_count = int(np.sum(mid == 0))
-    return gap_count / len(mid)
+def _block_noise(patch: np.ndarray) -> float:
+    diff_h = np.abs(np.diff(patch, axis=0))
+    diff_v = np.abs(np.diff(patch, axis=1))
+    return float((np.mean(diff_h) + np.mean(diff_v)) / 2)
 
 
 def analyze(image_bytes: bytes) -> dict:
     try:
         img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
         arr = np.array(img, dtype=float)
+        gray = np.mean(arr, axis=2)
 
-        r, g, b = arr[:, :, 0].flatten(), arr[:, :, 1].flatten(), arr[:, :, 2].flatten()
+        block = 32
+        h, w = gray.shape
+        noises = []
+        for y in range(0, h - block, block):
+            for x in range(0, w - block, block):
+                patch = gray[y:y + block, x:x + block]
+                noises.append(_block_noise(patch))
 
-        gap_r = _histogram_gaps(r)
-        gap_g = _histogram_gaps(g)
-        gap_b = _histogram_gaps(b)
-        gap_score = float(np.mean([gap_r, gap_g, gap_b]))
+        if len(noises) < 4:
+            return {"score": 0.0, "label": "clean", "details": {"note": "画像が小さすぎます"}, "image": None}
 
-        score = min(gap_score / 0.1, 1.0)  # 10%ギャップで最大スコア
+        noises = np.array(noises)
+        mean_noise = float(np.mean(noises))
+        std_noise = float(np.std(noises))
+        cov = std_noise / (mean_noise + 1e-8)
+
+        # 外れ値ブロック（ノイズが平均±2σを超える）の割合
+        outlier_ratio = float(np.sum(np.abs(noises - mean_noise) > 2 * std_noise) / len(noises))
+
+        # CoV > 1.0 で強い不整合、outlier_ratio > 0.1 で怪しいブロックが多い
+        score = min((cov / 1.2 * 0.7) + (outlier_ratio / 0.15 * 0.3), 1.0)
 
         return {
             "score": float(score),
             "label": get_label(score),
             "details": {
-                "histogram_gap_ratio": round(gap_score, 4),
-                "gap_per_channel": {
-                    "red":   round(gap_r, 4),
-                    "green": round(gap_g, 4),
-                    "blue":  round(gap_b, 4),
-                },
-                "note": "ヒストグラムの空白ビンはレベル補正・コントラスト調整の痕跡です",
+                "noise_mean": round(mean_noise, 3),
+                "noise_std": round(std_noise, 3),
+                "noise_cov": round(cov, 4),
+                "outlier_blocks": round(outlier_ratio, 4),
+                "block_count": len(noises),
+                "note": "ノイズ分布の不整合は合成・切り貼りの痕跡です",
             },
             "image": None,
         }

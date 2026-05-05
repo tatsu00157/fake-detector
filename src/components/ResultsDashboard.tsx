@@ -7,23 +7,20 @@ interface Props {
   comparison: ComparisonAnalysis | null;
 }
 
-const VERDICT_MAP = {
-  clean:      { text: '可能性は低い', color: '#22c55e', bg: '#f0fdf4' },
-  warning:    { text: '要注意',       color: '#f59e0b', bg: '#fffbeb' },
-  suspicious: { text: '可能性が高い', color: '#ef4444', bg: '#fef2f2' },
-};
+const SCORE_COLOR = (score: number) =>
+  score < 0.3 ? '#22c55e' : score < 0.6 ? '#f59e0b' : '#ef4444';
+const SCORE_BG = (score: number) =>
+  score < 0.3 ? '#f0fdf4' : score < 0.6 ? '#fffbeb' : '#fef2f2';
 
-function VerdictCard({ title, score, label }: { title: string; score: number; label: 'clean' | 'warning' | 'suspicious' }) {
-  const cfg = VERDICT_MAP[label];
+function VerdictCard({ title, score }: { title: string; score: number }) {
+  const color = SCORE_COLOR(score);
+  const bg = SCORE_BG(score);
   return (
-    <div className="verdict-card" style={{ background: cfg.bg, borderColor: cfg.color }}>
-      <div>
-        <h2 className="verdict-card__title">{title}</h2>
-        <p className="verdict-card__sub" style={{ color: cfg.color }}>{cfg.text}</p>
-      </div>
-      <span className="verdict-card__score" style={{ color: cfg.color }}>
+    <div className="verdict-card" style={{ background: bg, borderColor: color }}>
+      <h2 className="verdict-card__title">{title}</h2>
+      <span className="verdict-card__score" style={{ color }}>
         {Math.round(score * 100)}
-        <span className="verdict-card__unit"> / 100</span>
+        <span className="verdict-card__unit">%</span>
       </span>
     </div>
   );
@@ -37,8 +34,8 @@ export default function ResultsDashboard({ analysis, comparison }: Props) {
       {analysis && (
         <>
           <div className="results__verdicts">
-            <VerdictCard title="AI生成の可能性" score={analysis.ai_score} label={analysis.ai_label} />
-            <VerdictCard title="人為的加工の可能性" score={analysis.manipulation_score} label={analysis.manipulation_label} />
+            <VerdictCard title="AI生成スコア" score={analysis.ai_score} />
+            <VerdictCard title="加工スコア" score={analysis.manipulation_score} />
           </div>
 
           <div className="results__cards">
@@ -50,7 +47,7 @@ export default function ResultsDashboard({ analysis, comparison }: Props) {
 
             <p className="results__section-title">人為的加工検出</p>
             <AnalysisCard title="ELA解析" subtitle="JPEG再圧縮アーティファクトで編集箇所を検出" result={analysis.ela} />
-            <AnalysisCard title="明るさ・コントラスト・彩度解析" subtitle="ヒストグラムのギャップ・クリッピング・彩度異常を検出" result={analysis.manipulation} />
+            <AnalysisCard title="ノイズ残差マップ" subtitle="ノイズパターンの不整合から合成・切り貼り箇所を可視化" result={analysis.prnu} />
 
             <p className="results__section-title">情報</p>
             <AnalysisCard title="顔検出" subtitle="顔の有無と位置を検出" result={analysis.face_detection} />

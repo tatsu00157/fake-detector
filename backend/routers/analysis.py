@@ -2,7 +2,7 @@ from fastapi import APIRouter, UploadFile, File, HTTPException
 from services import (
     exif_service, ela_service, fft_service,
     pixel_stats_service, manipulation_service,
-    face_service, ai_features_service,
+    face_service, ai_features_service, prnu_service,
 )
 
 router = APIRouter(tags=["analysis"])
@@ -11,7 +11,7 @@ ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 MAX_BYTES = 20 * 1024 * 1024
 
 AI_KEYS           = ["exif", "fft", "pixel_stats", "ai_features"]
-MANIPULATION_KEYS = ["ela", "manipulation"]
+MANIPULATION_KEYS = ["ela", "prnu"]
 
 
 def _validate(file: UploadFile):
@@ -40,6 +40,7 @@ async def analyze_image(file: UploadFile = File(...)):
         "manipulation":    manipulation_service.analyze(image_bytes),
         "face_detection":  face_service.analyze(image_bytes),
         "ai_features":     ai_features_service.analyze(image_bytes),
+        "prnu":            prnu_service.analyze(image_bytes),
     }
 
     ai_score,           ai_label           = _score_label(results, AI_KEYS)

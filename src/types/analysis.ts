@@ -13,6 +13,7 @@ export interface FullAnalysis {
   manipulation: AnalysisResult;
   face_detection: AnalysisResult;
   ai_features: AnalysisResult;
+  prnu: AnalysisResult;
   ai_score: number;
   ai_label: 'clean' | 'warning' | 'suspicious';
   manipulation_score: number;
