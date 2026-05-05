@@ -1,0 +1,12 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.0
+python-multipart==0.0.9
+Pillow==10.4.0
+numpy==1.26.4
+opencv-python-headless==4.10.0.84
+exifread==3.0.0
+imagehash==4.3.1
+scikit-image==0.24.0
+scipy==1.14.0
+python-dotenv==1.0.1
+pydantic-settings==2.4.0

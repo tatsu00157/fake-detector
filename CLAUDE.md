@@ -19,6 +19,19 @@
 - `src/types/analysis.ts` — 解析結果の型定義
 - `src/components/AnalysisCard.tsx` — 解析項目カード（スコアバー・詳細展開）
 - `src/components/ResultsDashboard.tsx` — 解析結果一覧（総合判定・AI生成・人為的加工・情報）
+- `src/api/client.ts` — バックエンドAPIクライアント
+- `src/pages/Home.tsx` — 実APIと連携済み（ローディング・エラー表示あり）
+
+### バックエンド
+- `backend/main.py` — FastAPIアプリ本体
+- `backend/core/config.py` — 環境変数設定
+- `backend/routers/analysis.py` — `/api/v1/analyze` エンドポイント
+- `backend/services/exif_service.py` — Exifメタデータ解析・AIツール署名チェック
+- `backend/services/ela_service.py` — ELA解析
+- `backend/services/fft_service.py` — 周波数解析（FFT）
+- `backend/services/pixel_stats_service.py` — ピクセル統計解析
+- `backend/services/clone_detection_service.py` — クローンスタンプ検出
+- `backend/services/face_service.py` — 顔検出
 
 ## プロジェクト概要
 

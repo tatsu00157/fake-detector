@@ -1,42 +1,43 @@
 import React, { useState } from 'react';
 import UploadZone from '../components/UploadZone';
 import ResultsDashboard from '../components/ResultsDashboard';
+import { analyzeImage } from '../api/client';
 import { FullAnalysis } from '../types/analysis';
 
 type Mode = 'single' | 'compare';
 
-const DUMMY: FullAnalysis = {
-  overall_score: 0.72,
-  overall_label: 'suspicious',
-  exif:           { score: 0.9,  label: 'suspicious', details: { ai_signatures: ['stable diffusion'], software: 'Stable Diffusion' }, image: null },
-  ela:            { score: 0.45, label: 'warning',    details: { mean_error: 3.2, std_error: 12.1, is_jpeg: true }, image: null },
-  fft:            { score: 0.61, label: 'suspicious', details: { peak_ratio: 0.012, peak_pixels: 320 }, image: null },
-  pixel_stats:    { score: 0.4,  label: 'warning',    details: { suspicious_signals: 2 }, image: null },
-  clone_detection:{ score: 0.1,  label: 'clean',      details: { clone_pairs_found: 4 }, image: null },
-  face_detection: { score: 0.0,  label: 'info',       details: { face_count: 1, faces: [{ x: 120, y: 80, w: 90, h: 90 }] }, image: null },
-};
-
 export default function Home() {
   const [mode, setMode] = useState<Mode>('single');
   const [previews, setPreviews] = useState<string[]>([]);
-  const [showDummy, setShowDummy] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [analysis, setAnalysis] = useState<FullAnalysis | null>(null);
 
-  const handleFiles = (newFiles: File[]) => {
-    setShowDummy(true);
+  const handleFiles = async (newFiles: File[]) => {
     if (mode === 'compare') {
-      setPreviews((prev) => {
-        const urls = newFiles.map((f) => URL.createObjectURL(f));
-        return [...prev, ...urls].slice(0, 2);
-      });
+      setPreviews((prev) => [...prev, ...newFiles.map((f) => URL.createObjectURL(f))].slice(0, 2));
     } else {
       setPreviews(newFiles.map((f) => URL.createObjectURL(f)));
+    }
+
+    setError(null);
+    setAnalysis(null);
+    setLoading(true);
+
+    try {
+      setAnalysis(await analyzeImage(newFiles[0]));
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : '解析中にエラーが発生しました');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleModeChange = (next: Mode) => {
     setMode(next);
     setPreviews([]);
-    setShowDummy(false);
+    setAnalysis(null);
+    setError(null);
   };
 
   return (
@@ -62,7 +63,7 @@ export default function Home() {
       </div>
 
       <div className="home__upload">
-        <UploadZone onFileSelect={handleFiles} mode={mode} />
+        <UploadZone onFileSelect={handleFiles} mode={mode} disabled={loading} />
 
         {previews.length > 0 && (
           <div className="preview">
@@ -73,7 +74,16 @@ export default function Home() {
         )}
       </div>
 
-      <ResultsDashboard analysis={showDummy ? DUMMY : null} comparison={null} />
+      {loading && (
+        <div className="loading">
+          <div className="loading__spinner" />
+          <p>解析中...</p>
+        </div>
+      )}
+
+      {error && <div className="error-banner"><strong>エラー: </strong>{error}</div>}
+
+      <ResultsDashboard analysis={analysis} comparison={null} />
     </main>
   );
 }
