@@ -535,6 +535,63 @@ body {
   cursor: not-allowed;
 }
 
+.login__input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.login__input-wrap .login__input {
+  flex: 1;
+  padding-right: 4rem;
+}
+
+.login__eye {
+  position: absolute;
+  right: 0.6rem;
+  background: transparent;
+  border: none;
+  font-size: 0.75rem;
+  color: #64748b;
+  cursor: pointer;
+  padding: 0.25rem 0.4rem;
+}
+
+.login__eye:hover {
+  color: #1e293b;
+}
+
+.login__requirements {
+  list-style: none;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.login__requirements li {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  padding-left: 1.2rem;
+  position: relative;
+}
+
+.login__requirements li::before {
+  content: '✗';
+  position: absolute;
+  left: 0;
+  color: #ef4444;
+}
+
+.login__requirements li.met {
+  color: #16a34a;
+}
+
+.login__requirements li.met::before {
+  content: '✓';
+  color: #16a34a;
+}
+
 .success-banner {
   background: #f0fdf4;
   border: 1px solid #86efac;

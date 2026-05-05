@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import UploadZone from '../components/UploadZone';
 import ResultsDashboard from '../components/ResultsDashboard';
 import { analyzeImage, compareImages } from '../api/client';
+import { useAuth } from '../context/AuthContext';
 import { FullAnalysis, ComparisonAnalysis } from '../types/analysis';
 
 type Mode = 'single' | 'compare';
 
 export default function Home() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [mode, setMode] = useState<Mode>('single');
   const [previews, setPreviews] = useState<string[]>([]);
   const [files, setFiles] = useState<File[]>([]);
@@ -16,6 +20,11 @@ export default function Home() {
   const [comparison, setComparison] = useState<ComparisonAnalysis | null>(null);
 
   const handleFiles = async (newFiles: File[]) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
     setError(null);
 
     if (mode === 'compare') {
