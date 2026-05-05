@@ -22,7 +22,25 @@ def analyze(image_bytes: bytes) -> dict:
 
         mean = float(np.mean(diff_arr))
         std = float(np.std(diff_arr))
-        score = min(std / 20.0, 1.0)
+
+        # 局所ホットスポット検出
+        gray_diff = np.mean(diff_arr, axis=2)
+        h, w = gray_diff.shape
+        block = 16
+        local_maxes = [
+            np.max(gray_diff[y:y + block, x:x + block])
+            for y in range(0, h - block, block)
+            for x in range(0, w - block, block)
+        ]
+        local_max_std = float(np.std(local_maxes)) if local_maxes else 0.0
+
+        global_score = min(std / 12.0, 1.0)
+        hotspot_score = min(local_max_std / 15.0, 1.0)
+        score = max(global_score, hotspot_score)
+
+        # PNGはJPEG変換時に均一なアーティファクトが発生するためスコアを補正
+        if not is_jpeg:
+            score = score * 0.6
 
         out = io.BytesIO()
         Image.fromarray(amplified).save(out, format="PNG")
@@ -34,8 +52,9 @@ def analyze(image_bytes: bytes) -> dict:
             "details": {
                 "mean_error": round(mean, 3),
                 "std_error": round(std, 3),
+                "hotspot_std": round(local_max_std, 3),
                 "is_jpeg": is_jpeg,
-                "note": "誤差レベルの分散が高い領域は編集の可能性があります",
+                "note": "誤差レベルの分散・局所的なホットスポットが高い場合は編集の可能性があります",
             },
             "image": f"data:image/png;base64,{ela_b64}",
         }

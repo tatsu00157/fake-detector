@@ -32,6 +32,9 @@
 - `backend/services/pixel_stats_service.py` — ピクセル統計解析
 - `backend/services/clone_detection_service.py` — クローンスタンプ検出
 - `backend/services/face_service.py` — 顔検出
+- `backend/services/ai_features_service.py` — エッジシャープネス・カラーパレット解析（アニメAI検出）
+- AI判定スコアを4指標（Exif・FFT・ピクセル統計・AIフィーチャー）の平均に更新
+- 総合判定をAI生成スコアと人為的加工スコアに分離
 
 ## プロジェクト概要
 

@@ -27,10 +27,14 @@ def analyze(image_bytes: bytes) -> dict:
 
         outer = mag_norm.copy()
         outer[center_mask] = 0
-        peak_pixels = int(np.sum(outer > 0.85))
+
+        # しきい値を0.85→0.75に緩めて感度を上げる
+        peak_pixels = int(np.sum(outer > 0.75))
         total_outer = int(np.sum(~center_mask))
         peak_ratio = peak_pixels / total_outer if total_outer > 0 else 0.0
-        score = min(peak_ratio * 60, 1.0)
+
+        # スコア倍率を60→80に上げる
+        score = min(peak_ratio * 80, 1.0)
 
         out = io.BytesIO()
         Image.fromarray((mag_norm * 255).astype(np.uint8)).save(out, format="PNG")

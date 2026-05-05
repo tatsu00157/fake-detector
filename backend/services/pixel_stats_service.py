@@ -22,31 +22,81 @@ def _channel_stats(flat: np.ndarray) -> dict:
     }
 
 
+def _noise_level(arr: np.ndarray) -> float:
+    gray = np.mean(arr, axis=2)
+    block = 8
+    h, w = gray.shape
+    stds = []
+    for y in range(0, h - block, block):
+        for x in range(0, w - block, block):
+            patch = gray[y:y + block, x:x + block]
+            m = np.mean(patch)
+            if 20 < m < 235:
+                stds.append(float(np.std(patch)))
+    if not stds:
+        return 5.0
+    stds_sorted = sorted(stds)
+    return float(np.mean(stds_sorted[:max(1, len(stds_sorted) // 4)]))
+
+
+def _saturation(arr: np.ndarray) -> float:
+    r = arr[:, :, 0] / 255.0
+    g = arr[:, :, 1] / 255.0
+    b = arr[:, :, 2] / 255.0
+    maxc = np.maximum(np.maximum(r, g), b)
+    minc = np.minimum(np.minimum(r, g), b)
+    sat = np.where(maxc > 0, (maxc - minc) / maxc, 0.0)
+    return float(np.mean(sat))
+
+
+def _color_flatness(arr: np.ndarray) -> float:
+    block = 16
+    h, w = arr.shape[:2]
+    local_vars = [
+        float(np.var(arr[y:y + block, x:x + block]))
+        for y in range(0, h - block, block)
+        for x in range(0, w - block, block)
+    ]
+    return float(np.mean(local_vars)) if local_vars else 1000.0
+
+
 def analyze(image_bytes: bytes) -> dict:
     try:
-        arr = np.array(Image.open(io.BytesIO(image_bytes)).convert("RGB"), dtype=float)
-        channels = {"red": arr[:, :, 0].flatten(), "green": arr[:, :, 1].flatten(), "blue": arr[:, :, 2].flatten()}
+        img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        arr = np.array(img, dtype=float)
+
+        channels = {
+            "red":   arr[:, :, 0].flatten(),
+            "green": arr[:, :, 1].flatten(),
+            "blue":  arr[:, :, 2].flatten(),
+        }
         stats = {name: _channel_stats(ch) for name, ch in channels.items()}
 
-        suspicious_signals = sum(
+        noise      = _noise_level(arr)
+        saturation = _saturation(arr)
+        flatness   = _color_flatness(arr)
+
+        stat_suspicious = sum(
             1 for ch in stats.values()
-            if ch["entropy"] > 7.5 and abs(ch["skewness"]) < 0.3
+            if ch["entropy"] > 7.0 and abs(ch["skewness"]) < 0.5
         )
-        score = min(suspicious_signals / 3.0 * 0.6, 0.6)
+        noise_suspicious   = noise < 2.5
+        sat_suspicious     = saturation > 0.45
+        flat_suspicious    = flatness < 800
+
+        signal_count = stat_suspicious + (1 if noise_suspicious else 0) + (1 if sat_suspicious else 0) + (1 if flat_suspicious else 0)
+        score = min(signal_count / 5.0, 1.0)
 
         r, g, b = channels["red"], channels["green"], channels["blue"]
         return {
             "score": float(score),
             "label": get_label(score),
             "details": {
-                "channels": stats,
-                "color_correlation": {
-                    "rg": round(float(np.corrcoef(r, g)[0, 1]), 4),
-                    "rb": round(float(np.corrcoef(r, b)[0, 1]), 4),
-                    "gb": round(float(np.corrcoef(g, b)[0, 1]), 4),
-                },
-                "suspicious_signals": suspicious_signals,
-                "note": "AI画像は各チャンネルの統計が自然画像と異なる傾向があります",
+                "noise_level": round(noise, 3),
+                "saturation_level": round(saturation, 3),
+                "color_flatness": round(flatness, 1),
+                "suspicious_signals": signal_count,
+                "note": "ノイズが低い・彩度が高い・色がフラットな場合はAI生成の可能性があります",
             },
             "image": None,
         }

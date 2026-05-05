@@ -12,8 +12,11 @@ export interface FullAnalysis {
   pixel_stats: AnalysisResult;
   clone_detection: AnalysisResult;
   face_detection: AnalysisResult;
-  overall_score: number;
-  overall_label: 'clean' | 'warning' | 'suspicious';
+  ai_features: AnalysisResult;
+  ai_score: number;
+  ai_label: 'clean' | 'warning' | 'suspicious';
+  manipulation_score: number;
+  manipulation_label: 'clean' | 'warning' | 'suspicious';
 }
 
 export interface ComparisonAnalysis {

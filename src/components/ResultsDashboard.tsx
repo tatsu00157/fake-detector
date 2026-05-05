@@ -7,11 +7,27 @@ interface Props {
   comparison: ComparisonAnalysis | null;
 }
 
-const OVERALL_MAP = {
-  clean:      { text: '改ざんの痕跡は検出されませんでした',   color: '#22c55e', bg: '#f0fdf4' },
-  warning:    { text: '一部に要注意な点が見つかりました',     color: '#f59e0b', bg: '#fffbeb' },
-  suspicious: { text: '改ざんまたはAI生成の可能性が高いです', color: '#ef4444', bg: '#fef2f2' },
+const VERDICT_MAP = {
+  clean:      { text: '可能性は低い', color: '#22c55e', bg: '#f0fdf4' },
+  warning:    { text: '要注意',       color: '#f59e0b', bg: '#fffbeb' },
+  suspicious: { text: '可能性が高い', color: '#ef4444', bg: '#fef2f2' },
 };
+
+function VerdictCard({ title, score, label }: { title: string; score: number; label: 'clean' | 'warning' | 'suspicious' }) {
+  const cfg = VERDICT_MAP[label];
+  return (
+    <div className="verdict-card" style={{ background: cfg.bg, borderColor: cfg.color }}>
+      <div>
+        <h2 className="verdict-card__title">{title}</h2>
+        <p className="verdict-card__sub" style={{ color: cfg.color }}>{cfg.text}</p>
+      </div>
+      <span className="verdict-card__score" style={{ color: cfg.color }}>
+        {Math.round(score * 100)}
+        <span className="verdict-card__unit"> / 100</span>
+      </span>
+    </div>
+  );
+}
 
 export default function ResultsDashboard({ analysis, comparison }: Props) {
   if (!analysis && !comparison) return null;
@@ -20,28 +36,17 @@ export default function ResultsDashboard({ analysis, comparison }: Props) {
     <div className="results">
       {analysis && (
         <>
-          <div
-            className="results__overall"
-            style={{
-              background: OVERALL_MAP[analysis.overall_label].bg,
-              borderColor: OVERALL_MAP[analysis.overall_label].color,
-            }}
-          >
-            <div>
-              <h2 className="results__overall-title">総合判定</h2>
-              <p className="results__overall-sub">{OVERALL_MAP[analysis.overall_label].text}</p>
-            </div>
-            <span className="results__overall-score" style={{ color: OVERALL_MAP[analysis.overall_label].color }}>
-              {Math.round(analysis.overall_score * 100)}
-              <span className="results__overall-unit"> / 100</span>
-            </span>
+          <div className="results__verdicts">
+            <VerdictCard title="AI生成の可能性" score={analysis.ai_score} label={analysis.ai_label} />
+            <VerdictCard title="人為的加工の可能性" score={analysis.manipulation_score} label={analysis.manipulation_label} />
           </div>
 
           <div className="results__cards">
             <p className="results__section-title">AI生成検出</p>
             <AnalysisCard title="Exifメタデータ解析" subtitle="AIツールのメタデータ署名を検出" result={analysis.exif} />
             <AnalysisCard title="周波数解析（FFT）" subtitle="GAN特有の周期パターンを検出" result={analysis.fft} />
-            <AnalysisCard title="ピクセル統計解析" subtitle="AI画像特有の輝度・色分布を分析" result={analysis.pixel_stats} />
+            <AnalysisCard title="ピクセル統計解析" subtitle="ノイズレベル・彩度・色分布を分析" result={analysis.pixel_stats} />
+            <AnalysisCard title="エッジ・カラーパレット解析" subtitle="エッジの鋭さと色数でアニメAI画像を検出" result={analysis.ai_features} />
 
             <p className="results__section-title">人為的加工検出</p>
             <AnalysisCard title="ELA解析" subtitle="JPEG再圧縮アーティファクトで編集箇所を検出" result={analysis.ela} />

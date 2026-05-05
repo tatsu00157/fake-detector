@@ -7,8 +7,8 @@ from .base import get_label, error_result
 MAX_SIZE = 512
 BLOCK_SIZE = 16
 STEP = 8
-VARIANCE_THRESHOLD = 150
-MIN_DISTANCE = 40
+VARIANCE_THRESHOLD = 120
+MIN_DISTANCE = 30
 
 
 def _block_hash(block: np.ndarray):
@@ -60,7 +60,8 @@ def analyze(image_bytes: bytes) -> dict:
         vis.save(out, format="PNG")
         vis_b64 = base64.b64encode(out.getvalue()).decode()
 
-        score = min(len(clone_pairs) / 40.0, 1.0)
+        score = min(len(clone_pairs) / 30.0, 1.0)
+
         return {
             "score": float(score),
             "label": get_label(score),
