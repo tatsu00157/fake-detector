@@ -84,13 +84,18 @@ body {
 }
 
 .header-login {
-  color: #94a3b8;
+  padding: 0.35rem 1rem;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  color: #cbd5e1;
   text-decoration: none;
   font-size: 0.9rem;
-  transition: color 0.15s;
+  font-weight: 500;
+  transition: all 0.15s;
 }
 
 .header-login:hover {
+  border-color: #94a3b8;
   color: #f8fafc;
 }
 
