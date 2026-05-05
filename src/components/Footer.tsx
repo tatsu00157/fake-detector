@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className="footer">
       <div className="footer-inner">
-        <Link to="/" className="footer-logo">
+        <Link to="/" className="footer-logo" translate="no">
           <span className="logo-fake">Fake</span><span className="logo-scan">Scan</span>
         </Link>
         <nav className="footer-nav">
