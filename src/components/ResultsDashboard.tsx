@@ -17,6 +17,7 @@ export default function ResultsDashboard({ analysis, comparison }: Props) {
           <p className="results__section-title">AI生成検出</p>
           <AnalysisCard title="メタデータ解析" subtitle="AI生成ツールの署名・撮影情報・改ざん痕跡を検出" result={analysis.exif} />
           <AnalysisCard title="テクスチャ分析" subtitle="不自然に滑らかな領域を赤でハイライト（AI画像に特有）" result={analysis.texture} />
+          <AnalysisCard title="ノイズレベル解析" subtitle="ノイズが少なすぎる領域を赤でハイライト（AI画像に特有）" result={analysis.noise} />
 
           <p className="results__section-title">加工検出</p>
           <AnalysisCard title="ELA解析" subtitle="編集・加工された箇所を画像で可視化" result={analysis.ela} />

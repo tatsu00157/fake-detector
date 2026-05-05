@@ -34,14 +34,15 @@
 - `backend/services/ai_features_service.py` — エッジシャープネス・カラーパレット解析（アニメAI検出）
 - `backend/services/prnu_service.py` — ノイズ残差マップ（PRNUベース）で合成・切り貼り箇所を可視化
 - `backend/services/texture_service.py` — 局所テクスチャ分散マップ。不自然に滑らかな領域を赤でハイライト（AI生成画像に特有）
+- `backend/services/noise_service.py` — ノイズレベル解析。ガウシアンブラー差分でノイズ残差を抽出し、ノイズが少なすぎる領域を赤でハイライト（AI生成画像に特有）
 - `backend/services/manipulation_service.py` — ノイズCoV検出（スコア計算には未使用）
-- AI判定スコア：2指標（Exif・テクスチャ）の平均
+- AI判定スコア：3指標（Exif・テクスチャ・ノイズレベル）の平均
 - 加工判定スコア：2指標（ELA・PRNU）の平均
 - 総合判定カードは廃止。UIはセクション分けのみ
 
 ### フロントエンド（更新）
-- `src/components/ResultsDashboard.tsx` — AI生成検出（EXIF・テクスチャ分析）と加工検出（ELA・ノイズ残差マップ）でセクション分け。総合判定カードなし
-- `src/types/analysis.ts` — `prnu`・`texture` フィールド追加
+- `src/components/ResultsDashboard.tsx` — AI生成検出（EXIF・テクスチャ分析・ノイズレベル解析）と加工検出（ELA・ノイズ残差マップ）でセクション分け。総合判定カードなし
+- `src/types/analysis.ts` — `prnu`・`texture`・`noise` フィールド追加
 
 ## プロジェクト概要
 
