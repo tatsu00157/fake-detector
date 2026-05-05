@@ -50,7 +50,7 @@ export default function ResultsDashboard({ analysis, comparison }: Props) {
 
             <p className="results__section-title">人為的加工検出</p>
             <AnalysisCard title="ELA解析" subtitle="JPEG再圧縮アーティファクトで編集箇所を検出" result={analysis.ela} />
-            <AnalysisCard title="クローンスタンプ検出" subtitle="コピー&amp;ペースト領域を検出" result={analysis.clone_detection} />
+            <AnalysisCard title="明るさ・コントラスト・彩度解析" subtitle="ヒストグラムのギャップ・クリッピング・彩度異常を検出" result={analysis.manipulation} />
 
             <p className="results__section-title">情報</p>
             <AnalysisCard title="顔検出" subtitle="顔の有無と位置を検出" result={analysis.face_detection} />

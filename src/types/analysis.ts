@@ -10,7 +10,7 @@ export interface FullAnalysis {
   ela: AnalysisResult;
   fft: AnalysisResult;
   pixel_stats: AnalysisResult;
-  clone_detection: AnalysisResult;
+  manipulation: AnalysisResult;
   face_detection: AnalysisResult;
   ai_features: AnalysisResult;
   ai_score: number;
