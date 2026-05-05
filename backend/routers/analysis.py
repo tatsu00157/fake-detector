@@ -3,6 +3,7 @@ from services import (
     exif_service, ela_service, fft_service,
     pixel_stats_service, manipulation_service,
     face_service, ai_features_service, prnu_service,
+    texture_service,
 )
 
 router = APIRouter(tags=["analysis"])
@@ -41,6 +42,7 @@ async def analyze_image(file: UploadFile = File(...)):
         "face_detection":  face_service.analyze(image_bytes),
         "ai_features":     ai_features_service.analyze(image_bytes),
         "prnu":            prnu_service.analyze(image_bytes),
+        "texture":         texture_service.analyze(image_bytes),
     }
 
     ai_score,           ai_label           = _score_label(results, AI_KEYS)

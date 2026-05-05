@@ -1,0 +1,50 @@
+import io
+import base64
+import numpy as np
+from PIL import Image
+from .base import get_label, error_result
+
+
+def analyze(image_bytes: bytes) -> dict:
+    try:
+        img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        arr = np.array(img, dtype=float)
+        gray = np.mean(arr, axis=2)
+
+        block = 8
+        h, w = gray.shape
+        smoothness = np.zeros((h, w), dtype=float)
+
+        for y in range(0, h - block, block):
+            for x in range(0, w - block, block):
+                patch = gray[y:y + block, x:x + block]
+                var = float(np.var(patch))
+                # 分散が低い = 不自然に滑らか = AI画像の特徴
+                score = 1.0 - min(var / 80.0, 1.0)
+                smoothness[y:y + block, x:x + block] = score
+
+        # 赤オーバーレイ（滑らかな箇所ほど赤く）
+        original = np.array(img)
+        red = np.zeros_like(original)
+        red[:, :, 0] = 255
+        alpha = smoothness[:, :, np.newaxis] * 0.65
+        overlay = np.clip(original * (1 - alpha) + red * alpha, 0, 255).astype(np.uint8)
+
+        overall_score = float(np.mean(smoothness))
+        score = min(overall_score / 0.6, 1.0)
+
+        out = io.BytesIO()
+        Image.fromarray(overlay).save(out, format="PNG")
+        img_b64 = base64.b64encode(out.getvalue()).decode()
+
+        return {
+            "score": float(score),
+            "label": get_label(score),
+            "details": {
+                "smoothness": round(overall_score, 4),
+                "note": "赤い箇所が不自然に滑らかな領域（AI画像に特有）",
+            },
+            "image": f"data:image/png;base64,{img_b64}",
+        }
+    except Exception as e:
+        return error_result(str(e))
