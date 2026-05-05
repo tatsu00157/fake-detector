@@ -96,7 +96,7 @@ body {
 
 .header-signup {
   padding: 0.35rem 1rem;
-  background: #3b82f6;
+  background: #f472b6;
   color: #fff !important;
   text-decoration: none;
   font-size: 0.9rem;
@@ -106,7 +106,7 @@ body {
 }
 
 .header-signup:hover {
-  background: #2563eb;
+  background: #ec4899;
 }
 
 /* ===== Footer ===== */
@@ -338,7 +338,7 @@ body {
 
 .guest-limit__signup {
   padding: 0.6rem 1.6rem;
-  background: #0f172a;
+  background: #f472b6;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -349,7 +349,7 @@ body {
 }
 
 .guest-limit__signup:hover {
-  background: #1e293b;
+  background: #ec4899;
 }
 
 .guest-limit__login {
@@ -675,6 +675,14 @@ body {
 
 .login__submit:hover:not(:disabled) {
   background: #1e293b;
+}
+
+.login__submit--pink {
+  background: #f472b6;
+}
+
+.login__submit--pink:hover:not(:disabled) {
+  background: #ec4899;
 }
 
 .login__submit:disabled {

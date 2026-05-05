@@ -120,7 +120,7 @@ export default function Signup() {
           {error && <div className="error-banner">{error}</div>}
           {message && <div className="success-banner">{message}</div>}
 
-          <button type="submit" className="login__submit" disabled={loading}>
+          <button type="submit" className="login__submit login__submit--pink" disabled={loading}>
             {loading ? '処理中...' : '登録する'}
           </button>
         </form>
