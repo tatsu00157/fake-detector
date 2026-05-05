@@ -44,9 +44,9 @@ def analyze(image_bytes: bytes) -> dict:
             "score": float(score),
             "label": get_label(score),
             "details": {
-                "peak_ratio": round(float(peak_ratio), 5),
-                "peak_pixels": peak_pixels,
-                "note": "高周波の規則的なパターンはGAN生成の痕跡を示す可能性があります",
+                "周期パターン比率": round(float(peak_ratio), 5),
+                "周期パターン画素数": peak_pixels,
+                "解説": "高周波の規則的なパターンはGAN生成の痕跡を示す可能性があります",
             },
             "image": f"data:image/png;base64,{fft_b64}",
         }

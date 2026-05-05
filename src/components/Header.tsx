@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function Header() {
@@ -7,7 +8,9 @@ export default function Header() {
   return (
     <header className="header">
       <div className="header-inner">
-        <span className="header-logo">FakeDetector</span>
+        <Link to="/" className="header-logo">
+          <span className="logo-fake">Fake</span><span className="logo-scan">Scan</span>
+        </Link>
         <nav className="header-nav">
           {user ? (
             <>
@@ -16,8 +19,8 @@ export default function Header() {
             </>
           ) : (
             <>
-              <a href="/login" className="header-login">ログイン</a>
-              <a href="/signup" className="header-signup">新規登録</a>
+              <Link to="/login" className="header-login">ログイン</Link>
+              <Link to="/signup" className="header-signup">新規登録</Link>
             </>
           )}
         </nav>

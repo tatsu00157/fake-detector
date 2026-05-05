@@ -48,11 +48,11 @@ export default function UploadZone({ onFileSelect, mode, disabled }: Props) {
       />
       <label htmlFor="file-upload" className="upload-zone__label">
         <span className="upload-zone__icon">↑</span>
-        <p>ドラッグ＆ドロップ または クリックしてアップロード</p>
+        <p className="upload-zone__main">画像をドラッグ＆ドロップ、またはクリックして選択</p>
         <p className="upload-zone__sub">
           {mode === 'compare'
-            ? '2枚まで選択（比較モード） — JPEG / PNG / WebP'
-            : 'JPEG・PNG・WebP 対応 — 最大 20MB'}
+            ? '比較モード：2枚まで選択できます（JPEG・PNG・WebP）'
+            : '対応形式：JPEG・PNG・WebP　最大20MB'}
         </p>
       </label>
     </div>

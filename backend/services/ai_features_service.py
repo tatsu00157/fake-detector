@@ -64,10 +64,10 @@ def analyze(image_bytes: bytes) -> dict:
             "score": float(score),
             "label": get_label(score),
             "details": {
-                "edge_sharpness_ratio": round(sharpness_ratio, 3),
-                "edge_density": round(edge_density, 4),
-                "color_variety": round(color_variety, 3),
-                "note": "エッジが鋭く色数が少ない場合はAI生成（特にアニメ調）の可能性があります",
+                "エッジ鋭さ比率": round(sharpness_ratio, 3),
+                "エッジ密度": round(edge_density, 4),
+                "色の多様度": round(color_variety, 3),
+                "解説": "エッジが鋭く色数が少ない場合はAI生成（特にアニメ調）の可能性があります",
             },
             "image": None,
         }

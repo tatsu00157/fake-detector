@@ -31,9 +31,8 @@ def analyze(image_bytes: bytes) -> dict:
             "score": 0.0,
             "label": "info",
             "details": {
-                "face_count": len(faces),
-                "faces": [{"x": int(x), "y": int(y), "w": int(w), "h": int(h)} for x, y, w, h in faces],
-                "note": "緑のボックスが検出された顔です",
+                "検出された顔の数": len(faces),
+                "解説": "画像内で検出された顔を緑のボックスで囲んでいます",
             },
             "image": f"data:image/png;base64,{vis_b64}",
         }

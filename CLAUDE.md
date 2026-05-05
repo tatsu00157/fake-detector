@@ -53,7 +53,9 @@
 - `src/pages/Login.tsx` — ログインページのみ。下部に新規登録へのリンク
 - `src/pages/Signup.tsx` — 新規登録ページ。パスワード表示切替・要件リアルタイム表示（8文字以上・英字・数字・記号）・パスワード確認欄。下部にログインへのリンク
 - `src/App.tsx` — React Router導入・全ページ公開（認証はアップロード時にチェック）
-- `src/components/Header.tsx` — 未ログイン時は「ログイン」「新規登録」を別ボタンで表示。ログイン時はメール＋ログアウトボタン
+- `src/components/Header.tsx` — ロゴ（FakeScan）はホームへのリンク。未ログイン時は「ログイン」「新規登録」を別ボタンで表示
+- `src/components/Footer.tsx` — フッター（ロゴ・プライバシーポリシー・利用規約・お問い合わせ・コピーライト）
+- `src/components/UploadZone.tsx` — 日本語ベースのテキストに統一
 - `src/pages/Home.tsx` — ゲスト3回/日・無料登録10回/日の利用制限。上限時はページ内に登録促進バナーを表示
 - `src/api/client.ts` — 全APIリクエストにSupabase JWTを付与
 

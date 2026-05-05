@@ -46,7 +46,7 @@ def analyze(image_bytes: bytes) -> dict:
             "score": float(score),
             "label": get_label(score),
             "details": {
-                "note": "赤い箇所がノイズの少なすぎる領域（AI画像に特有）",
+                "解説": "赤い箇所がノイズの少なすぎる領域（AI画像に特有）",
             },
             "image": f"data:image/png;base64,{img_b64}",
         }

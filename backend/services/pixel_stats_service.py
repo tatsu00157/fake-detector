@@ -89,10 +89,10 @@ def analyze(image_bytes: bytes) -> dict:
             "score": float(score),
             "label": get_label(score),
             "details": {
-                "noise_level": round(noise, 3),
-                "color_flatness": round(flatness, 1),
-                "suspicious_signals": signal_count,
-                "note": "ノイズが低い・色がフラットな場合はAI生成の可能性があります",
+                "ノイズレベル": round(noise, 3),
+                "色の均一度": round(flatness, 1),
+                "異常シグナル数": signal_count,
+                "解説": "ノイズが低い・色がフラットな場合はAI生成の可能性があります",
             },
             "image": None,
         }
