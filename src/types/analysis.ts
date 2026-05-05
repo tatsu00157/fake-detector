@@ -14,6 +14,8 @@ export interface FullAnalysis {
   face_detection: AnalysisResult;
   ai_features: AnalysisResult;
   prnu: AnalysisResult;
+  c2pa: AnalysisResult;
+  watermark: AnalysisResult;
   ai_score: number;
   ai_label: 'clean' | 'warning' | 'suspicious';
   manipulation_score: number;

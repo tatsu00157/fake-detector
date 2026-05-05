@@ -33,14 +33,16 @@
 - `backend/services/face_service.py` — 顔検出
 - `backend/services/ai_features_service.py` — エッジシャープネス・カラーパレット解析（アニメAI検出）
 - `backend/services/prnu_service.py` — ノイズ残差マップ（PRNUベース）で合成・切り貼り箇所を可視化
+- `backend/services/c2pa_service.py` — C2PA署名・XMP署名でAI生成ツール（Midjourney・DALL-E・Firefly等）を検出
+- `backend/services/watermark_service.py` — Stable Diffusionの不可視透かし（invisible-watermark）を検出
 - `backend/services/manipulation_service.py` — ノイズCoV検出（スコア計算には未使用）
 - AI判定スコア：4指標（Exif・FFT・ピクセル統計・AIフィーチャー）の平均
 - 加工判定スコア：2指標（ELA・PRNU）の平均
 - 総合判定をAI生成スコアと加工スコアに分離
 
 ### フロントエンド（更新）
-- `src/components/ResultsDashboard.tsx` — 表示カードをEXIF・ELA・PRNUの3枚に絞り込み。総合判定カード・FFT・ピクセル統計・AIフィーチャー・顔検出カード・セクションタイトルをすべて削除
-- `src/types/analysis.ts` — `prnu` フィールド追加
+- `src/components/ResultsDashboard.tsx` — EXIF・C2PA・不可視透かし・ELA・PRNUの5枚構成
+- `src/types/analysis.ts` — `prnu`・`c2pa`・`watermark` フィールド追加
 
 ## プロジェクト概要
 
