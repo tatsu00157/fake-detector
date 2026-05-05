@@ -76,7 +76,8 @@ def analyze(image_bytes: bytes) -> dict:
         # 既知フィールドは日本語ラベルで表示、技術的内部フィールドは非表示
         metadata = {}
         for field, label in CAMERA_FIELD_LABELS.items():
-            metadata[label] = raw_tags[field] if field in raw_tags else "なし"
+            if field in raw_tags:
+                metadata[label] = raw_tags[field]
         for field, value in raw_tags.items():
             if field not in CAMERA_FIELD_LABELS and field not in HIDDEN_FIELDS:
                 metadata[field] = value
