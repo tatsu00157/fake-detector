@@ -10,13 +10,20 @@ AI_TOOL_SIGNATURES = [
     "ai generated", "ai-generated", "generative",
 ]
 
-EXPECTED_CAMERA_FIELDS = [
-    "EXIF ExposureTime",
-    "EXIF ISOSpeedRatings",
-    "EXIF FocalLength",
-    "Image Make",
-    "Image Model",
-]
+CAMERA_FIELD_LABELS = {
+    "Image Make":           "カメラメーカー",
+    "Image Model":          "カメラ機種",
+    "EXIF DateTimeOriginal":"撮影日時",
+    "EXIF ExposureTime":    "シャッタースピード",
+    "EXIF ISOSpeedRatings": "ISO感度",
+    "EXIF FNumber":         "絞り値（F値）",
+    "EXIF FocalLength":     "焦点距離",
+    "GPS GPSLatitude":      "GPS緯度",
+    "GPS GPSLongitude":     "GPS経度",
+    "Image Software":       "ソフトウェア",
+    "EXIF Flash":           "フラッシュ",
+    "EXIF WhiteBalance":    "ホワイトバランス",
+}
 
 
 def analyze(image_bytes: bytes) -> dict:
@@ -28,40 +35,42 @@ def analyze(image_bytes: bytes) -> dict:
                 "score": 0.2,
                 "label": "warning",
                 "details": {
-                    "message": "EXIFデータが見つかりません（AI生成画像はEXIFを持たないことが多い）",
-                    "ai_signatures": [],
-                    "raw_tags": {},
+                    "カメラ情報": "なし（AI生成画像はカメラ情報を持たないことが多い）",
                 },
                 "image": None,
             }
 
         raw_tags = {str(k): str(v) for k, v in tags.items()}
         all_values = " ".join(raw_tags.values()).lower()
+        software = raw_tags.get("Image Software", "").lower()
 
         ai_signatures = [t for t in AI_TOOL_SIGNATURES if t in all_values]
-        missing_fields = [f for f in EXPECTED_CAMERA_FIELDS if f not in raw_tags]
-        software = raw_tags.get("Image Software", "").lower()
+
+        # ユーザー向けに日本語でメタデータを表示
+        metadata = {}
+        for field, label in CAMERA_FIELD_LABELS.items():
+            if field in raw_tags:
+                metadata[label] = raw_tags[field]
+
+        # カメラ必須フィールドの欠落チェック
+        core_fields = ["Image Make", "Image Model", "EXIF ExposureTime", "EXIF ISOSpeedRatings", "EXIF FocalLength"]
+        missing_count = sum(1 for f in core_fields if f not in raw_tags)
 
         score = 0.0
         if ai_signatures:
             score = 0.95
+            metadata["AI署名"] = "、".join(ai_signatures)
         elif any(t in software for t in AI_TOOL_SIGNATURES):
             score = 0.85
-        elif len(missing_fields) >= 4:
+            metadata["AI署名"] = raw_tags.get("Image Software", "")
+        elif missing_count >= 4:
             score = 0.4
-
-        camera = f"{raw_tags.get('Image Make', '')} {raw_tags.get('Image Model', '')}".strip()
+            metadata["カメラ情報"] = "ほぼなし（カメラで撮影された形跡がありません）"
 
         return {
             "score": float(score),
             "label": get_label(score),
-            "details": {
-                "ai_signatures": ai_signatures,
-                "missing_camera_fields": missing_fields,
-                "software": raw_tags.get("Image Software", "（なし）"),
-                "camera": camera or "（なし）",
-                "datetime": raw_tags.get("EXIF DateTimeOriginal", "（なし）"),
-            },
+            "details": metadata if metadata else {"カメラ情報": "なし"},
             "image": None,
         }
     except Exception as e:
