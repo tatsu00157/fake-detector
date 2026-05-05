@@ -58,6 +58,14 @@ export default function Home() {
     setError(null);
   };
 
+  const handleReset = () => {
+    setPreviews([]);
+    setFiles([]);
+    setAnalysis(null);
+    setComparison(null);
+    setError(null);
+  };
+
   return (
     <main className="home">
       <div className="home__hero">
@@ -88,6 +96,7 @@ export default function Home() {
             {previews.map((url, i) => (
               <img key={i} src={url} alt={`preview ${i + 1}`} className="preview__img" />
             ))}
+            <button className="reset-btn" onClick={handleReset}>リセット</button>
           </div>
         )}
 
