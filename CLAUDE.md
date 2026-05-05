@@ -20,7 +20,7 @@
 - `src/components/AnalysisCard.tsx` — 解析項目カード（スコアバー・詳細展開）
 - `src/components/ResultsDashboard.tsx` — 解析結果一覧（総合判定・AI生成・人為的加工・情報）
 - `src/api/client.ts` — バックエンドAPIクライアント
-- `src/pages/Home.tsx` — 実APIと連携済み（ローディング・エラー表示あり）
+- `src/pages/Home.tsx` — 実APIと連携済み（ローディング・エラー表示あり）。2枚比較モードは2枚目アップロード後に自動で比較実行
 
 ### バックエンド
 - `backend/main.py` — FastAPIアプリ本体
@@ -36,6 +36,9 @@
 - `backend/services/texture_service.py` — 局所テクスチャ分散マップ。不自然に滑らかな領域を赤でハイライト（AI生成画像に特有）
 - `backend/services/noise_service.py` — ノイズレベル解析。ガウシアンブラー差分でノイズ残差を抽出し、ノイズが少なすぎる領域を赤でハイライト（AI生成画像に特有）
 - `backend/services/manipulation_service.py` — ノイズCoV検出（スコア計算には未使用）
+- `backend/services/diff_service.py` — 2枚の画像の差分を赤でハイライト
+- `backend/services/similarity_service.py` — SSIM＋パーセプチュアルハッシュで類似度をパーセント表示
+- `backend/routers/compare.py` — `/api/v1/compare` エンドポイント（2ファイル受け取り）
 - AI判定スコア：3指標（Exif・テクスチャ・ノイズレベル）の平均
 - 加工判定スコア：2指標（ELA・PRNU）の平均
 - 総合判定カードは廃止。UIはセクション分けのみ

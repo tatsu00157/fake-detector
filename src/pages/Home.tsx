@@ -1,42 +1,60 @@
 import React, { useState } from 'react';
 import UploadZone from '../components/UploadZone';
 import ResultsDashboard from '../components/ResultsDashboard';
-import { analyzeImage } from '../api/client';
-import { FullAnalysis } from '../types/analysis';
+import { analyzeImage, compareImages } from '../api/client';
+import { FullAnalysis, ComparisonAnalysis } from '../types/analysis';
 
 type Mode = 'single' | 'compare';
 
 export default function Home() {
   const [mode, setMode] = useState<Mode>('single');
   const [previews, setPreviews] = useState<string[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<FullAnalysis | null>(null);
+  const [comparison, setComparison] = useState<ComparisonAnalysis | null>(null);
 
   const handleFiles = async (newFiles: File[]) => {
-    if (mode === 'compare') {
-      setPreviews((prev) => [...prev, ...newFiles.map((f) => URL.createObjectURL(f))].slice(0, 2));
-    } else {
-      setPreviews(newFiles.map((f) => URL.createObjectURL(f)));
-    }
-
     setError(null);
-    setAnalysis(null);
-    setLoading(true);
 
-    try {
-      setAnalysis(await analyzeImage(newFiles[0]));
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : '解析中にエラーが発生しました');
-    } finally {
-      setLoading(false);
+    if (mode === 'compare') {
+      const updated = [...files, ...newFiles].slice(0, 2);
+      setFiles(updated);
+      setPreviews(updated.map((f) => URL.createObjectURL(f)));
+
+      if (updated.length === 2) {
+        setLoading(true);
+        setComparison(null);
+        try {
+          setComparison(await compareImages(updated[0], updated[1]));
+        } catch (e: unknown) {
+          setError(e instanceof Error ? e.message : '解析中にエラーが発生しました');
+        } finally {
+          setLoading(false);
+        }
+      }
+    } else {
+      setFiles([newFiles[0]]);
+      setPreviews([URL.createObjectURL(newFiles[0])]);
+      setAnalysis(null);
+      setLoading(true);
+      try {
+        setAnalysis(await analyzeImage(newFiles[0]));
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : '解析中にエラーが発生しました');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   const handleModeChange = (next: Mode) => {
     setMode(next);
     setPreviews([]);
+    setFiles([]);
     setAnalysis(null);
+    setComparison(null);
     setError(null);
   };
 
@@ -72,6 +90,12 @@ export default function Home() {
             ))}
           </div>
         )}
+
+        {mode === 'compare' && files.length === 1 && !loading && (
+          <p className="upload-zone__sub" style={{ textAlign: 'center', marginTop: '0.5rem' }}>
+            2枚目の画像をアップロードしてください
+          </p>
+        )}
       </div>
 
       {loading && (
@@ -83,7 +107,7 @@ export default function Home() {
 
       {error && <div className="error-banner"><strong>エラー: </strong>{error}</div>}
 
-      <ResultsDashboard analysis={analysis} comparison={null} />
+      <ResultsDashboard analysis={analysis} comparison={comparison} />
     </main>
   );
 }

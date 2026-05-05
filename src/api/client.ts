@@ -13,3 +13,10 @@ export async function analyzeImage(file: File) {
   body.append('file', file);
   return handleResponse(await fetch(`${API_BASE}/analyze`, { method: 'POST', body }));
 }
+
+export async function compareImages(file1: File, file2: File) {
+  const body = new FormData();
+  body.append('file1', file1);
+  body.append('file2', file2);
+  return handleResponse(await fetch(`${API_BASE}/compare`, { method: 'POST', body }));
+}
