@@ -49,9 +49,10 @@
 - `src/types/analysis.ts` — `prnu`・`texture`・`noise` フィールド追加
 - `src/lib/supabase.ts` — Supabaseクライアント
 - `src/context/AuthContext.tsx` — 認証状態管理（ログイン・ログアウト・セッション）
-- `src/pages/Login.tsx` — ログイン・新規登録ページ
-- `src/App.tsx` — React Router導入・認証保護ルート
+- `src/pages/Login.tsx` — ログイン・新規登録ページ。パスワード表示切替・要件リアルタイム表示（8文字以上・英字・数字・記号）・パスワード確認欄
+- `src/App.tsx` — React Router導入・全ページ公開（認証はアップロード時にチェック）
 - `src/components/Header.tsx` — ログイン状態でユーザー表示・ログアウトボタン
+- `src/pages/Home.tsx` — アップロード時に未ログインならログインページへ誘導
 - `src/api/client.ts` — 全APIリクエストにSupabase JWTを付与
 
 ### バックエンド（認証）
