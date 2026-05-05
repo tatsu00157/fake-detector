@@ -429,7 +429,7 @@ body {
 /* ===== Delete Button ===== */
 .upload-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   margin-bottom: 0.5rem;
 }
 
