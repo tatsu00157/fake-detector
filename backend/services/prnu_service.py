@@ -60,12 +60,19 @@ def analyze(image_bytes: bytes) -> dict:
         Image.fromarray(overlay).save(out, format="PNG")
         img_b64 = base64.b64encode(out.getvalue()).decode()
 
+        if score >= 0.6:
+            judgment = "合成・切り貼りの痕跡が検出されました"
+        elif score >= 0.3:
+            judgment = "一部にノイズパターンの乱れがあります"
+        else:
+            judgment = "合成・切り貼りの痕跡は検出されませんでした"
+
         return {
             "score": float(score),
             "label": get_label(score),
             "details": {
-                "anomaly_ratio": round(anomaly_ratio, 4),
-                "note": "赤い箇所がノイズパターンの不整合領域（合成・切り貼りの可能性）",
+                "不整合領域の割合": f"{round(anomaly_ratio * 100, 1)}%",
+                "判定": judgment,
             },
             "image": f"data:image/png;base64,{img_b64}",
         }

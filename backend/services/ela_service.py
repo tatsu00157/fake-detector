@@ -46,15 +46,19 @@ def analyze(image_bytes: bytes) -> dict:
         Image.fromarray(amplified).save(out, format="PNG")
         ela_b64 = base64.b64encode(out.getvalue()).decode()
 
+        if score >= 0.6:
+            judgment = "編集・加工の痕跡が検出されました"
+        elif score >= 0.3:
+            judgment = "一部に不審な箇所があります"
+        else:
+            judgment = "編集・加工の痕跡は検出されませんでした"
+
         return {
             "score": float(score),
             "label": get_label(score),
             "details": {
-                "mean_error": round(mean, 3),
-                "std_error": round(std, 3),
-                "hotspot_std": round(local_max_std, 3),
-                "is_jpeg": is_jpeg,
-                "note": "誤差レベルの分散・局所的なホットスポットが高い場合は編集の可能性があります",
+                "ファイル形式": "JPEG" if is_jpeg else "PNG",
+                "判定": judgment,
             },
             "image": f"data:image/png;base64,{ela_b64}",
         }
