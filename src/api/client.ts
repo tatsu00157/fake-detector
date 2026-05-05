@@ -4,7 +4,7 @@ const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8000/api/v1'
 
 async function getAuthHeader(): Promise<HeadersInit> {
   const { data: { session } } = await supabase.auth.getSession();
-  if (!session) throw new Error('ログインが必要です');
+  if (!session) return {};
   return { Authorization: `Bearer ${session.access_token}` };
 }
 

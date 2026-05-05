@@ -2,6 +2,7 @@ from fastapi import Header, HTTPException, Depends
 from supabase import create_client
 from core.config import settings
 from datetime import date
+from typing import Optional
 
 FREE_LIMIT = 10
 
@@ -10,18 +11,21 @@ def _supabase():
     return create_client(settings.supabase_url, settings.supabase_service_role_key)
 
 
-async def require_auth(authorization: str = Header(...)):
-    if not authorization.startswith("Bearer "):
-        raise HTTPException(401, "認証が必要です")
+async def optional_auth(authorization: Optional[str] = Header(default=None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        return None
     token = authorization[7:]
     try:
         user = _supabase().auth.get_user(token)
         return user.user
     except Exception:
-        raise HTTPException(401, "無効なトークンです")
+        return None
 
 
-async def check_usage(user=Depends(require_auth)):
+async def check_usage(user=Depends(optional_auth)):
+    if user is None:
+        return None
+
     sb = _supabase()
     today = str(date.today())
     uid = user.id

@@ -41,6 +41,7 @@
 - `backend/services/similarity_service.py` — SSIM＋パーセプチュアルハッシュで類似度をパーセント表示
 - `backend/routers/compare.py` — `/api/v1/compare` エンドポイント（2ファイル受け取り）
 - AI判定スコア：3指標（Exif・テクスチャ・ノイズレベル）の平均
+- ゲスト：3回/日（localStorage管理）、無料登録：10回/日（Supabase管理）、有料：無制限
 - 加工判定スコア：2指標（ELA・PRNU）の平均
 - 総合判定カードは廃止。UIはセクション分けのみ
 
@@ -52,7 +53,7 @@
 - `src/pages/Login.tsx` — ログイン・新規登録ページ。パスワード表示切替・要件リアルタイム表示（8文字以上・英字・数字・記号）・パスワード確認欄
 - `src/App.tsx` — React Router導入・全ページ公開（認証はアップロード時にチェック）
 - `src/components/Header.tsx` — ログイン状態でユーザー表示・ログアウトボタン
-- `src/pages/Home.tsx` — アップロード時に未ログインならログインページへ誘導
+- `src/pages/Home.tsx` — ゲスト3回/日・無料登録10回/日の利用制限。上限時はページ内に登録促進バナーを表示
 - `src/api/client.ts` — 全APIリクエストにSupabase JWTを付与
 
 ### バックエンド（認証）
