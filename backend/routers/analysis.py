@@ -11,7 +11,7 @@ router = APIRouter(tags=["analysis"])
 ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 MAX_BYTES = 20 * 1024 * 1024
 
-AI_KEYS           = ["exif", "fft", "pixel_stats", "ai_features"]
+AI_KEYS           = ["exif", "texture"]
 MANIPULATION_KEYS = ["ela", "prnu"]
 
 

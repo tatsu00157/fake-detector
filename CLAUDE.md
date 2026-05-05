@@ -40,7 +40,7 @@
 - 総合判定をAI生成スコアと加工スコアに分離
 
 ### フロントエンド（更新）
-- `src/components/ResultsDashboard.tsx` — EXIF・テクスチャ分析・ELA・PRNUの4枚構成
+- `src/components/ResultsDashboard.tsx` — AI生成検出（EXIF・テクスチャ）と加工検出（ELA・PRNU）でセクション分け
 - `src/types/analysis.ts` — `prnu`・`texture` フィールド追加
 
 ## プロジェクト概要
