@@ -15,7 +15,10 @@ export default function Header() {
               <button className="header-signout" onClick={signOut}>ログアウト</button>
             </>
           ) : (
-            <a href="/login">ログイン</a>
+            <>
+              <a href="/login" className="header-login">ログイン</a>
+              <a href="/login?mode=signup" className="header-signup">新規登録</a>
+            </>
           )}
         </nav>
       </div>

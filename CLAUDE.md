@@ -52,7 +52,7 @@
 - `src/context/AuthContext.tsx` — 認証状態管理（ログイン・ログアウト・セッション）
 - `src/pages/Login.tsx` — ログイン・新規登録ページ。パスワード表示切替・要件リアルタイム表示（8文字以上・英字・数字・記号）・パスワード確認欄
 - `src/App.tsx` — React Router導入・全ページ公開（認証はアップロード時にチェック）
-- `src/components/Header.tsx` — ログイン状態でユーザー表示・ログアウトボタン
+- `src/components/Header.tsx` — 未ログイン時は「ログイン」「新規登録」を別ボタンで表示。ログイン時はメール＋ログアウトボタン
 - `src/pages/Home.tsx` — ゲスト3回/日・無料登録10回/日の利用制限。上限時はページ内に登録促進バナーを表示
 - `src/api/client.ts` — 全APIリクエストにSupabase JWTを付与
 

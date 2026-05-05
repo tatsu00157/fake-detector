@@ -623,6 +623,32 @@ body {
   color: #f8fafc;
 }
 
+.header-login {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.15s;
+}
+
+.header-login:hover {
+  color: #f8fafc;
+}
+
+.header-signup {
+  padding: 0.35rem 1rem;
+  background: #3b82f6;
+  color: #fff !important;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.header-signup:hover {
+  background: #2563eb;
+}
+
 /* ===== Guest Limit ===== */
 .guest-limit {
   margin: 1.5rem 0;
