@@ -46,13 +46,11 @@ def analyze(image_bytes: bytes) -> dict:
 
         ai_signatures = [t for t in AI_TOOL_SIGNATURES if t in all_values]
 
-        # ユーザー向けに日本語でメタデータを表示
+        # 全フィールドを値あり・なし問わず表示
         metadata = {}
         for field, label in CAMERA_FIELD_LABELS.items():
-            if field in raw_tags:
-                metadata[label] = raw_tags[field]
+            metadata[label] = raw_tags[field] if field in raw_tags else "なし"
 
-        # カメラ必須フィールドの欠落チェック
         core_fields = ["Image Make", "Image Model", "EXIF ExposureTime", "EXIF ISOSpeedRatings", "EXIF FocalLength"]
         missing_count = sum(1 for f in core_fields if f not in raw_tags)
 
@@ -65,12 +63,11 @@ def analyze(image_bytes: bytes) -> dict:
             metadata["AI署名"] = raw_tags.get("Image Software", "")
         elif missing_count >= 4:
             score = 0.4
-            metadata["カメラ情報"] = "ほぼなし（カメラで撮影された形跡がありません）"
 
         return {
             "score": float(score),
             "label": get_label(score),
-            "details": metadata if metadata else {"カメラ情報": "なし"},
+            "details": metadata,
             "image": None,
         }
     except Exception as e:
