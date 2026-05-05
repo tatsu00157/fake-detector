@@ -149,7 +149,7 @@ export default function Home() {
           <p className="guest-limit__text">ゲストの無料利用回数（{GUEST_LIMIT}回/日）に達しました</p>
           <p className="guest-limit__sub">無料登録すると1日10回まで利用できます</p>
           <div className="guest-limit__actions">
-            <button className="guest-limit__signup" onClick={() => navigate('/login?mode=signup')}>無料で登録する</button>
+            <button className="guest-limit__signup" onClick={() => navigate('/signup')}>無料で登録する</button>
             <button className="guest-limit__login" onClick={() => navigate('/login')}>ログイン</button>
           </div>
         </div>

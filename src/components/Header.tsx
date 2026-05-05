@@ -17,7 +17,7 @@ export default function Header() {
           ) : (
             <>
               <a href="/login" className="header-login">ログイン</a>
-              <a href="/login?mode=signup" className="header-signup">新規登録</a>
+              <a href="/signup" className="header-signup">新規登録</a>
             </>
           )}
         </nav>

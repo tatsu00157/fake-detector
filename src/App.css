@@ -592,6 +592,23 @@ body {
   color: #16a34a;
 }
 
+.login__switch {
+  margin-top: 1.25rem;
+  font-size: 0.85rem;
+  color: #64748b;
+  text-align: center;
+}
+
+.login__switch a {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login__switch a:hover {
+  text-decoration: underline;
+}
+
 .success-banner {
   background: #f0fdf4;
   border: 1px solid #86efac;
