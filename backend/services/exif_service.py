@@ -44,6 +44,7 @@ CAMERA_FIELD_LABELS = {
 HIDDEN_FIELDS = {
     "Image ExifOffset", "Image GPSInfo", "Image JPEGInterchangeFormat",
     "Image JPEGInterchangeFormatLength", "EXIF MakerNote",
+    "EXIF ExifVersion", "EXIF FlashPixVersion",
     "EXIF ComponentsConfiguration", "EXIF SubSecTimeOriginal",
     "EXIF SubSecTime", "EXIF SubSecTimeDigitized", "Thumbnail Compression",
     "Thumbnail JPEGInterchangeFormat", "Thumbnail JPEGInterchangeFormatLength",
