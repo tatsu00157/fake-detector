@@ -26,7 +26,7 @@
 - `backend/main.py` — FastAPIアプリ本体
 - `backend/core/config.py` — 環境変数設定
 - `backend/routers/analysis.py` — `/api/v1/analyze` エンドポイント
-- `backend/services/exif_service.py` — Exifメタデータ解析・AIツール署名チェック。既知フィールドは日本語ラベル、それ以外の全フィールドもそのまま表示
+- `backend/services/exif_service.py` — Exifメタデータ解析・AIツール署名チェック。全フィールドを日本語ラベルで表示、技術的内部フィールドは非表示
 - `backend/services/ela_service.py` — ELA解析（局所ホットスポット検出含む）
 - `backend/services/fft_service.py` — 周波数解析（FFT）
 - `backend/services/pixel_stats_service.py` — ピクセル統計解析（彩度シグナル削除済み・AI誤検知防止）

@@ -11,18 +11,44 @@ AI_TOOL_SIGNATURES = [
 ]
 
 CAMERA_FIELD_LABELS = {
-    "Image Make":           "カメラメーカー",
-    "Image Model":          "カメラ機種",
-    "EXIF DateTimeOriginal":"撮影日時",
-    "EXIF ExposureTime":    "シャッタースピード",
-    "EXIF ISOSpeedRatings": "ISO感度",
-    "EXIF FNumber":         "絞り値（F値）",
-    "EXIF FocalLength":     "焦点距離",
-    "GPS GPSLatitude":      "GPS緯度",
-    "GPS GPSLongitude":     "GPS経度",
-    "Image Software":       "ソフトウェア",
-    "EXIF Flash":           "フラッシュ",
-    "EXIF WhiteBalance":    "ホワイトバランス",
+    "Image Make":                "カメラメーカー",
+    "Image Model":               "カメラ機種",
+    "EXIF DateTimeOriginal":     "撮影日時",
+    "Image DateTime":            "更新日時",
+    "EXIF ExposureTime":         "露光時間",
+    "EXIF ISOSpeedRatings":      "光の感度（ISO）",
+    "EXIF FNumber":              "レンズの明るさ（F値）",
+    "EXIF FocalLength":          "焦点距離",
+    "EXIF Flash":                "フラッシュ",
+    "EXIF WhiteBalance":         "色合いの補正",
+    "EXIF SceneCaptureType":     "撮影シーン",
+    "EXIF Sharpness":            "シャープネス",
+    "EXIF Saturation":           "彩度",
+    "EXIF Contrast":             "コントラスト",
+    "EXIF LensMake":             "レンズメーカー",
+    "EXIF LensModel":            "レンズ機種",
+    "EXIF ColorSpace":           "色空間",
+    "EXIF PixelXDimension":      "画像の幅（px）",
+    "EXIF PixelYDimension":      "画像の高さ（px）",
+    "Image XResolution":         "横解像度",
+    "Image YResolution":         "縦解像度",
+    "Image ResolutionUnit":      "解像度の単位",
+    "Image Orientation":         "画像の向き",
+    "Image Software":            "ソフトウェア",
+    "GPS GPSLatitude":           "撮影場所（緯度）",
+    "GPS GPSLongitude":          "撮影場所（経度）",
+    "GPS GPSAltitude":           "撮影高度",
+}
+
+# 技術的な内部データで表示不要なフィールド
+HIDDEN_FIELDS = {
+    "Image ExifOffset", "Image GPSInfo", "Image JPEGInterchangeFormat",
+    "Image JPEGInterchangeFormatLength", "EXIF MakerNote",
+    "EXIF ComponentsConfiguration", "EXIF SubSecTimeOriginal",
+    "EXIF SubSecTime", "EXIF SubSecTimeDigitized", "Thumbnail Compression",
+    "Thumbnail JPEGInterchangeFormat", "Thumbnail JPEGInterchangeFormatLength",
+    "Thumbnail ResolutionUnit", "Thumbnail XResolution", "Thumbnail YResolution",
+    "Thumbnail Orientation",
 }
 
 
@@ -46,12 +72,12 @@ def analyze(image_bytes: bytes) -> dict:
 
         ai_signatures = [t for t in AI_TOOL_SIGNATURES if t in all_values]
 
-        # 既知フィールドは日本語ラベルで、残りはそのまま全て表示
+        # 既知フィールドは日本語ラベルで表示、技術的内部フィールドは非表示
         metadata = {}
         for field, label in CAMERA_FIELD_LABELS.items():
             metadata[label] = raw_tags[field] if field in raw_tags else "なし"
         for field, value in raw_tags.items():
-            if field not in CAMERA_FIELD_LABELS:
+            if field not in CAMERA_FIELD_LABELS and field not in HIDDEN_FIELDS:
                 metadata[field] = value
 
         core_fields = ["Image Make", "Image Model", "EXIF ExposureTime", "EXIF ISOSpeedRatings", "EXIF FocalLength"]
