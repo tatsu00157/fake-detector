@@ -38,11 +38,11 @@ def analyze(image_bytes: bytes) -> dict:
         z_scores = np.abs((log_e - mean_e) / std_e)
         suspicious_ratio = float(np.mean(z_scores > 2.0))
 
-        heatmap_small = (np.clip(z_scores / 4.0, 0, 1) * 255).astype(np.uint8)
-        heatmap = cv2.resize(heatmap_small, (w, h), interpolation=cv2.INTER_NEAREST)
-        heatmap_color = cv2.applyColorMap(heatmap, cv2.COLORMAP_HOT)
+        mask_small = (z_scores > 2.0).astype(np.uint8) * 255
+        mask = cv2.resize(mask_small, (w, h), interpolation=cv2.INTER_NEAREST)
         original_bgr = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
-        overlay = cv2.addWeighted(original_bgr, 0.6, heatmap_color, 0.4, 0)
+        overlay = original_bgr.copy()
+        overlay[mask > 0] = overlay[mask > 0] * 0.4 + np.array([0, 0, 200]) * 0.6
 
         _, buf = cv2.imencode(".jpg", overlay)
         img_b64 = f"data:image/jpeg;base64,{base64.b64encode(buf).decode()}"
@@ -57,6 +57,7 @@ def analyze(image_bytes: bytes) -> dict:
             "details": {
                 "異常ブロック割合": f"{round(suspicious_ratio * 100, 1)}%",
                 "判定": "周波数統計に異常あり（合成の疑い）" if score > 0.6 else "やや異常あり" if score > 0.3 else "周波数統計は正常",
+                "見方": "赤くハイライトされた箇所が周波数統計の異常を示しています",
             },
         }
     except Exception as e:

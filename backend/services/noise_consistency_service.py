@@ -36,11 +36,11 @@ def analyze(image_bytes: bytes) -> dict:
         deviation = np.abs(block_stds - mean_std) / mean_std
         inconsistent_ratio = float(np.mean(deviation > 0.5))
 
-        heatmap_small = (np.clip(deviation / 2.0, 0, 1) * 255).astype(np.uint8)
-        heatmap = cv2.resize(heatmap_small, (w, h), interpolation=cv2.INTER_LINEAR)
-        heatmap_color = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
+        mask_small = (deviation > 0.5).astype(np.uint8) * 255
+        mask = cv2.resize(mask_small, (w, h), interpolation=cv2.INTER_NEAREST)
         original_bgr = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
-        overlay = cv2.addWeighted(original_bgr, 0.6, heatmap_color, 0.4, 0)
+        overlay = original_bgr.copy()
+        overlay[mask > 0] = overlay[mask > 0] * 0.4 + np.array([0, 0, 200]) * 0.6
 
         _, buf = cv2.imencode(".jpg", overlay)
         img_b64 = f"data:image/jpeg;base64,{base64.b64encode(buf).decode()}"
@@ -55,6 +55,7 @@ def analyze(image_bytes: bytes) -> dict:
             "details": {
                 "不整合領域の割合": f"{round(inconsistent_ratio * 100, 1)}%",
                 "判定": "ノイズパターンに不整合あり（合成の疑い）" if score > 0.6 else "やや不整合あり" if score > 0.3 else "ノイズパターンは整合",
+                "見方": "赤くハイライトされた箇所がノイズパターンの不整合を示しています",
             },
         }
     except Exception as e:
