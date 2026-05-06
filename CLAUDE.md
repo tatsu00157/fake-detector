@@ -27,8 +27,9 @@
 - `backend/main.py` — FastAPIアプリ本体
 - `backend/core/config.py` — 環境変数設定
 - `backend/routers/analysis.py` — `/api/v1/analyze` エンドポイント。プレミアムユーザーのみnoise_consistency・dct_splicingを追加実行
-- `backend/services/noise_consistency_service.py` — ノイズ整合性解析。不整合ブロックのみ赤でハイライト、それ以外は元画像のまま表示。プレミアム限定
-- `backend/services/dct_splicing_service.py` — DCTスプライシング検出。異常ブロックのみ赤でハイライト、それ以外は元画像のまま表示。プレミアム限定
+- `backend/services/noise_consistency_service.py` — ノイズ整合性解析。不整合ブロックのみ赤でハイライト。無料機能
+- `backend/services/dct_splicing_service.py` — DCTスプライシング検出。異常ブロックのみ赤でハイライト。無料機能
+- `backend/services/prnu_service.py` — ノイズ残差マップ（最高精度）。プレミアムのみ
 - `backend/requirements.txt` — transformers・torch追加（ai_detection削除後も残存。不要なら削除可）
 - `backend/services/exif_service.py` — Exifメタデータ解析・AIツール署名チェック。値が存在するフィールドのみ日本語ラベルで表示、技術的内部フィールドは非表示
 - `backend/services/ela_service.py` — ELA解析（局所ホットスポット検出含む）
@@ -45,7 +46,7 @@
 - `backend/routers/compare.py` — `/api/v1/compare` エンドポイント（2ファイル受け取り）
 - AI判定スコア：3指標（Exif・テクスチャ・ノイズレベル）の平均
 - ゲスト：3回/日（localStorage管理）、無料登録：10回/日（Supabase管理）、有料：無制限
-- 加工判定スコア：2指標（ELA・PRNU）の平均
+- 加工判定スコア：3指標（ELA・ノイズ整合性・DCT）の平均。PRNUはプレミアムのみ
 - 総合判定カードは廃止。UIはセクション分けのみ
 
 ### フロントエンド（更新）
@@ -56,8 +57,9 @@
 - `src/pages/Login.tsx` — ログインページのみ。下部に新規登録へのリンク
 - `src/pages/Signup.tsx` — 新規登録ページ。パスワード表示切替・要件リアルタイム表示（8文字以上・英字・数字・記号）・パスワード確認欄。下部にログインへのリンク
 - `src/App.tsx` — React Router導入・全ページ公開（認証はアップロード時にチェック）
-- `src/components/Header.tsx` — ロゴ（FakeScan）はホームへのリンク。未ログイン時は「ログイン」「新規登録」を別ボタンで表示
-- `src/components/Footer.tsx` — フッター（ロゴ・プライバシーポリシー・利用規約・お問い合わせ・コピーライト）
+- `src/components/Header.tsx` — ロゴ（FakeScan）はホームへのリンク（lang="en"）。未ログイン時は「ログイン」「新規登録」を別ボタンで表示
+- `src/components/Footer.tsx` — フッター（ロゴ・プライバシーポリシー・利用規約・お問い合わせ・コピーライト）。ロゴとコピーライトにlang="en"設定
+- `public/index.html` — lang="ja"設定・タイトルをFakeScanに変更
 - `src/components/UploadZone.tsx` — 日本語ベースのテキストに統一
 - ブランドカラー：ピンク（`#f472b6`）を登録系CTAボタンに使用（ヘッダー新規登録・ゲスト制限バナー・新規登録ページ送信ボタン）
 - ヘッダーのログインボタン：アウトラインボタン（枠線あり、常時視認可能）
@@ -186,8 +188,7 @@ AIが生成したフェイク画像・動画、および人為的に加工され
 - 差分検出・類似度比較（2枚比較）
 
 **解析機能（有料・実装済み）:**
-- ノイズ整合性解析（noise_consistency_service）プレミアムのみ
-- DCTスプライシング検出（dct_splicing_service）プレミアムのみ
+- ノイズ残差マップ（prnu_service）プレミアムのみ（最高精度の加工検出）
 
 **解析機能（有料・未実装）:**
 - 同一人物判定（face_recognition）

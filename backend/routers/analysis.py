@@ -14,7 +14,7 @@ ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 MAX_BYTES = 20 * 1024 * 1024
 
 AI_KEYS           = ["exif", "texture", "noise"]
-MANIPULATION_KEYS = ["ela", "prnu"]
+MANIPULATION_KEYS = ["ela", "noise_consistency", "dct_splicing"]
 
 
 def _validate(file: UploadFile):
@@ -36,22 +36,22 @@ async def analyze_image(file: UploadFile = File(...), user=Depends(check_usage))
         raise HTTPException(400, "ファイルサイズが大きすぎます（最大20MB）")
 
     results = {
-        "exif":            exif_service.analyze(image_bytes),
-        "ela":             ela_service.analyze(image_bytes),
-        "fft":             fft_service.analyze(image_bytes),
-        "pixel_stats":     pixel_stats_service.analyze(image_bytes),
-        "manipulation":    manipulation_service.analyze(image_bytes),
-        "face_detection":  face_service.analyze(image_bytes),
-        "ai_features":     ai_features_service.analyze(image_bytes),
-        "prnu":            prnu_service.analyze(image_bytes),
-        "texture":         texture_service.analyze(image_bytes),
-        "noise":           noise_service.analyze(image_bytes),
+        "exif":               exif_service.analyze(image_bytes),
+        "ela":                ela_service.analyze(image_bytes),
+        "fft":                fft_service.analyze(image_bytes),
+        "pixel_stats":        pixel_stats_service.analyze(image_bytes),
+        "manipulation":       manipulation_service.analyze(image_bytes),
+        "face_detection":     face_service.analyze(image_bytes),
+        "ai_features":        ai_features_service.analyze(image_bytes),
+        "texture":            texture_service.analyze(image_bytes),
+        "noise":              noise_service.analyze(image_bytes),
+        "noise_consistency":  noise_consistency_service.analyze(image_bytes),
+        "dct_splicing":       dct_splicing_service.analyze(image_bytes),
     }
 
     is_premium = user is not None and _is_premium(_supabase(), user.id)
     if is_premium:
-        results["noise_consistency"] = noise_consistency_service.analyze(image_bytes)
-        results["dct_splicing"]      = dct_splicing_service.analyze(image_bytes)
+        results["prnu"] = prnu_service.analyze(image_bytes)
 
     ai_score,           ai_label           = _score_label(results, AI_KEYS)
     manipulation_score, manipulation_label = _score_label(results, MANIPULATION_KEYS)

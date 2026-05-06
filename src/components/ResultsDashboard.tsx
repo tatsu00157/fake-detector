@@ -20,14 +20,12 @@ export default function ResultsDashboard({ analysis, comparison }: Props) {
           <AnalysisCard title="ノイズレベル解析" subtitle="ノイズが少なすぎる領域を赤でハイライト（AI画像に特有）" result={analysis.noise} />
 
           <p className="results__section-title">加工検出</p>
-          {analysis.noise_consistency && (
-            <AnalysisCard title="ノイズ整合性解析" subtitle="ブロック間のノイズパターン不整合から合成箇所を検出" result={analysis.noise_consistency} />
-          )}
-          {analysis.dct_splicing && (
-            <AnalysisCard title="DCTスプライシング検出" subtitle="周波数係数の統計的異常から合成箇所を検出" result={analysis.dct_splicing} />
-          )}
           <AnalysisCard title="ELA解析" subtitle="編集・加工された箇所を画像で可視化" result={analysis.ela} />
-          <AnalysisCard title="ノイズ残差マップ" subtitle="別画像から合成・切り貼りされた箇所を赤でハイライト" result={analysis.prnu} />
+          <AnalysisCard title="ノイズ整合性解析" subtitle="ノイズパターンの不整合から合成箇所を検出" result={analysis.noise_consistency} />
+          <AnalysisCard title="DCTスプライシング検出" subtitle="周波数係数の統計的異常から合成箇所を検出" result={analysis.dct_splicing} />
+          {analysis.prnu && (
+            <AnalysisCard title="ノイズ残差マップ" subtitle="別画像から合成・切り貼りされた箇所を赤でハイライト" result={analysis.prnu} />
+          )}
         </div>
       )}
 
