@@ -27,8 +27,7 @@
 - `backend/main.py` — FastAPIアプリ本体
 - `backend/core/config.py` — 環境変数設定
 - `backend/routers/analysis.py` — `/api/v1/analyze` エンドポイント。プレミアムユーザーのみai_detectionを追加実行
-- `backend/services/ai_detection_service.py` — AI生成画像検出（HuggingFace dima806/ai_vs_real_image_detection・EfficientNetモデル）。初回起動時にモデルをダウンロード。PNG入力はJPEG変換後に解析。プレミアム限定
-- `backend/requirements.txt` — transformers・torch追加
+- `backend/requirements.txt` — transformers・torch追加（ai_detection削除後も残存。不要なら削除可）
 - `backend/services/exif_service.py` — Exifメタデータ解析・AIツール署名チェック。値が存在するフィールドのみ日本語ラベルで表示、技術的内部フィールドは非表示
 - `backend/services/ela_service.py` — ELA解析（局所ホットスポット検出含む）
 - `backend/services/fft_service.py` — 周波数解析（FFT）
@@ -183,9 +182,6 @@ AIが生成したフェイク画像・動画、および人為的に加工され
 - ノイズレベル解析
 - ノイズ残差マップ
 - 差分検出・類似度比較（2枚比較）
-
-**解析機能（有料・実装済み）:**
-- AI生成画像検出（dima806/ai_vs_real_image_detection・EfficientNetモデル）プレミアムユーザーのみ実行
 
 **解析機能（有料・未実装）:**
 - 同一人物判定（face_recognition）
