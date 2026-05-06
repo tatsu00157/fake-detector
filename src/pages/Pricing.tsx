@@ -7,14 +7,12 @@ type Feature = { label: string; free: boolean; premium: boolean };
 
 const FEATURES: Feature[] = [
   { label: '1日の解析回数', free: false, premium: false },
-  { label: 'Exifメタデータ解析・AI署名チェック', free: true, premium: true },
-  { label: 'ELA解析（加工箇所の検出）', free: true, premium: true },
-  { label: '周波数解析（GAN特有ノイズ検出）', free: true, premium: true },
-  { label: 'テクスチャ解析（AI特有の滑らかさ検出）', free: true, premium: true },
+  { label: 'メタデータ解析・AI署名チェック', free: true, premium: true },
+  { label: 'テクスチャ分析（AI画像の滑らかさ検出）', free: true, premium: true },
   { label: 'ノイズレベル解析（AI生成の判定）', free: true, premium: true },
+  { label: 'ELA解析（加工箇所の検出）', free: true, premium: true },
   { label: 'ノイズ残差マップ（合成箇所の可視化）', free: true, premium: true },
-  { label: '顔検出', free: true, premium: true },
-  { label: '2枚比較・差分検出', free: true, premium: true },
+  { label: '2枚比較（差分・類似度）', free: true, premium: true },
   { label: 'PDFレポート出力', free: false, premium: true },
   { label: '解析履歴の保存', free: false, premium: true },
 ];
