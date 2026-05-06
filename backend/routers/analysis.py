@@ -3,9 +3,9 @@ from services import (
     exif_service, ela_service, fft_service,
     pixel_stats_service, manipulation_service,
     face_service, ai_features_service, prnu_service,
-    texture_service, noise_service,
+    texture_service, noise_service, ai_detection_service,
 )
-from dependencies.auth import check_usage
+from dependencies.auth import check_usage, _is_premium, _supabase
 
 router = APIRouter(tags=["analysis"])
 
@@ -28,7 +28,7 @@ def _score_label(results: dict, keys: list) -> tuple:
 
 
 @router.post("/analyze")
-async def analyze_image(file: UploadFile = File(...), _user=Depends(check_usage)):
+async def analyze_image(file: UploadFile = File(...), user=Depends(check_usage)):
     _validate(file)
     image_bytes = await file.read()
     if len(image_bytes) > MAX_BYTES:
@@ -46,6 +46,10 @@ async def analyze_image(file: UploadFile = File(...), _user=Depends(check_usage)
         "texture":         texture_service.analyze(image_bytes),
         "noise":           noise_service.analyze(image_bytes),
     }
+
+    is_premium = user is not None and _is_premium(_supabase(), user.id)
+    if is_premium:
+        results["ai_detection"] = ai_detection_service.analyze(image_bytes)
 
     ai_score,           ai_label           = _score_label(results, AI_KEYS)
     manipulation_score, manipulation_label = _score_label(results, MANIPULATION_KEYS)

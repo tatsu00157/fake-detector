@@ -15,6 +15,9 @@ export default function ResultsDashboard({ analysis, comparison }: Props) {
       {analysis && (
         <div className="results__cards">
           <p className="results__section-title">AI生成検出</p>
+          {analysis.ai_detection && (
+            <AnalysisCard title="AI生成画像検出（高精度）" subtitle="機械学習モデルによるAI生成画像の高精度判定" result={analysis.ai_detection} />
+          )}
           <AnalysisCard title="メタデータ解析" subtitle="AI生成ツールの署名・撮影情報・改ざん痕跡を検出" result={analysis.exif} />
           <AnalysisCard title="テクスチャ分析" subtitle="不自然に滑らかな領域を赤でハイライト（AI画像に特有）" result={analysis.texture} />
           <AnalysisCard title="ノイズレベル解析" subtitle="ノイズが少なすぎる領域を赤でハイライト（AI画像に特有）" result={analysis.noise} />
