@@ -29,6 +29,12 @@ async def optional_auth(authorization: Optional[str] = Header(default=None)):
         return None
 
 
+async def require_auth(user=Depends(optional_auth)):
+    if user is None:
+        raise HTTPException(401, "ログインが必要です")
+    return user
+
+
 async def check_usage(user=Depends(optional_auth)):
     if user is None:
         return None
