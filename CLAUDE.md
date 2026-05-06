@@ -64,7 +64,7 @@
 ### バックエンド（認証・決済）
 - `backend/dependencies/auth.py` — JWT検証・無料利用回数チェック（1日10回）・プレミアム判定・require_auth（Stripeエンドポイント用・未認証は401）
 - `backend/routers/analysis.py` / `compare.py` — 認証依存関係を追加
-- `backend/routers/stripe_router.py` — Stripe Checkout・ポータル・Webhookエンドポイント。success_urlは/pricing。WebhookハンドラはAPI key設定済み
+- `backend/routers/stripe_router.py` — Stripe Checkout・ポータル・Webhookエンドポイント。success_urlは/pricing。WebhookハンドラはAPI key設定済み。subscription_dataにuser_idメタデータを付与（Webhook側でuser_id取得に必要）
 - `backend/core/config.py` — Stripe環境変数（stripe_secret_key・stripe_webhook_secret・stripe_price_id）追加
 - `backend/requirements.txt` — stripe==10.12.0 追加
 - `supabase/schema.sql` — usage_logs・subscriptionsテーブル定義（Supabase SQLエディタで実行）

@@ -21,6 +21,7 @@ async def create_checkout_session(user=Depends(require_auth)):
             metadata={"user_id": user.id},
             line_items=[{"price": settings.stripe_price_id, "quantity": 1}],
             mode="subscription",
+            subscription_data={"metadata": {"user_id": user.id}},
             success_url="http://localhost:3000/pricing?success=true",
             cancel_url="http://localhost:3000/pricing?canceled=true",
         )
@@ -51,12 +52,16 @@ async def stripe_webhook(request: Request):
     payload = await request.body()
     sig_header = request.headers.get("stripe-signature")
 
+    print(f"[webhook] secret length={len(settings.stripe_webhook_secret)} starts_with={settings.stripe_webhook_secret[:10]}")
+    print(f"[webhook] payload length={len(payload)}")
+    print(f"[webhook] sig_header={sig_header}")
     try:
         event = stripe.Webhook.construct_event(
             payload, sig_header, settings.stripe_webhook_secret
         )
-    except Exception:
-        raise HTTPException(400, "署名の検証に失敗しました")
+    except Exception as e:
+        print(f"Webhook error: {e}")
+        raise HTTPException(400, str(e))
 
     _stripe()
     sb = __import__("supabase").create_client(settings.supabase_url, settings.supabase_service_role_key)
