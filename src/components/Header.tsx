@@ -12,6 +12,7 @@ export default function Header() {
           <span className="logo-fake">Fake</span><span className="logo-scan">Scan</span>
         </Link>
         <nav className="header-nav">
+          <Link to="/pricing" className="header-pricing">料金プラン</Link>
           {user ? (
             <>
               <span className="header-email">{user.email}</span>

@@ -152,6 +152,7 @@ export default function Home() {
             <button className="guest-limit__signup" onClick={() => navigate('/signup')}>無料で登録する</button>
             <button className="guest-limit__login" onClick={() => navigate('/login')}>ログイン</button>
           </div>
+          <button className="guest-limit__pricing" onClick={() => navigate('/pricing')}>料金プランを見る</button>
         </div>
       )}
 

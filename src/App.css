@@ -83,6 +83,18 @@ body {
   color: #f8fafc;
 }
 
+.header-pricing {
+  padding: 0.35rem 0.75rem;
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.15s;
+}
+
+.header-pricing:hover {
+  color: #f8fafc;
+}
+
 .header-login {
   padding: 0.35rem 1rem;
   border: 1px solid #475569;
@@ -370,6 +382,22 @@ body {
 
 .guest-limit__login:hover {
   background: #f1f5f9;
+}
+
+.guest-limit__pricing {
+  margin-top: 0.75rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.guest-limit__pricing:hover {
+  color: #334155;
 }
 
 /* ===== Loading ===== */
@@ -710,6 +738,210 @@ body {
 
 .login__switch a:hover {
   text-decoration: underline;
+}
+
+/* ===== Pricing ===== */
+.pricing {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 5rem;
+  flex: 1;
+  width: 100%;
+}
+
+.pricing__hero {
+  text-align: center;
+  padding: 3rem 0 2.5rem;
+}
+
+.pricing__title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.03em;
+}
+
+.pricing__desc {
+  font-size: 1rem;
+  color: #64748b;
+}
+
+.pricing__cards {
+  display: flex;
+  gap: 1.25rem;
+  justify-content: center;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.pricing__card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.pricing__card--premium {
+  border-color: #f472b6;
+  box-shadow: 0 4px 20px rgba(244,114,182,0.15);
+}
+
+.pricing__badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #f472b6;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.8rem;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+.pricing__plan-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+.pricing__price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.pricing__amount {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.04em;
+}
+
+.pricing__unit {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.pricing__limit {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-top: 0.25rem;
+}
+
+.pricing__btn {
+  padding: 0.65rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  width: 100%;
+}
+
+.pricing__btn--free {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.pricing__btn--free:hover {
+  background: #e2e8f0;
+}
+
+.pricing__btn--premium {
+  background: #f472b6;
+  color: #fff;
+}
+
+.pricing__btn--premium:hover:not(:disabled) {
+  background: #ec4899;
+}
+
+.pricing__btn--premium:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pricing__table-wrap {
+  overflow-x: auto;
+}
+
+.pricing__table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.pricing__th {
+  padding: 0.85rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  color: #475569;
+}
+
+.pricing__th--feature {
+  text-align: left;
+  color: #0f172a;
+}
+
+.pricing__th--premium {
+  color: #f472b6;
+}
+
+.pricing__tr:not(:last-child) {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.pricing__tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.pricing__td {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  text-align: center;
+  color: #334155;
+}
+
+.pricing__td--feature {
+  text-align: left;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.pricing__check {
+  color: #16a34a;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.pricing__cross {
+  color: #cbd5e1;
+  font-size: 1rem;
+}
+
+.pricing__limit-text {
+  font-size: 0.8rem;
+  color: #64748b;
+  line-height: 1.5;
 }
 
 /* ===== Responsive ===== */

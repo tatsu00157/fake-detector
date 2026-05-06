@@ -70,9 +70,11 @@
 - `supabase/schema.sql` — usage_logs・subscriptionsテーブル定義（Supabase SQLエディタで実行）
 
 ### フロントエンド（決済）
-- `src/pages/Pricing.tsx` — 料金プランページ（無料・プレミアム980円/月）。Stripe Checkoutへリダイレクト
+- `src/pages/Pricing.tsx` — 料金プランページ（無料・プレミアム980円/月）。プランカード＋機能比較表。Stripe Checkoutへリダイレクト
 - `src/api/client.ts` — createCheckoutSession・createPortalSession API追加
 - `src/App.tsx` — /pricingルート追加
+- `src/components/Header.tsx` — 「料金プラン」リンクを全ユーザー向けに追加
+- `src/pages/Home.tsx` — ゲスト制限バナーに「料金プランを見る」リンクを追加
 
 ## プロジェクト概要
 
