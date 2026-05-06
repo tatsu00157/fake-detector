@@ -45,7 +45,7 @@ def analyze(image_bytes: bytes) -> dict:
         overlay = cv2.addWeighted(original_bgr, 0.6, heatmap_color, 0.4, 0)
 
         _, buf = cv2.imencode(".jpg", overlay)
-        img_b64 = base64.b64encode(buf).decode()
+        img_b64 = f"data:image/jpeg;base64,{base64.b64encode(buf).decode()}"
 
         score = min(suspicious_ratio * 3.0, 1.0)
         label = "suspicious" if score > 0.6 else "warning" if score > 0.3 else "clean"
