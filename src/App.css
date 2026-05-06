@@ -808,6 +808,24 @@ body {
   white-space: nowrap;
 }
 
+.pricing__current-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #64748b;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.8rem;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+.pricing__current-badge--premium {
+  background: #f472b6;
+}
+
 .pricing__plan-name {
   font-size: 1.1rem;
   font-weight: 700;

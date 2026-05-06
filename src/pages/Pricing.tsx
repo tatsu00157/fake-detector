@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { createCheckoutSession } from '../api/client';
+import { supabase } from '../lib/supabase';
 
 type Feature = { label: string; free: boolean; premium: boolean };
 
@@ -21,6 +22,19 @@ export default function Pricing() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from('subscriptions')
+      .select('status')
+      .eq('user_id', user.id)
+      .single()
+      .then(({ data }) => {
+        if (data?.status === 'active') setIsPremium(true);
+      });
+  }, [user]);
 
   const handleSubscribe = async () => {
     if (!user) {
@@ -47,6 +61,9 @@ export default function Pricing() {
 
       <div className="pricing__cards">
         <div className="pricing__card">
+          {!isPremium && user && (
+            <div className="pricing__current-badge">現在のプラン</div>
+          )}
           <div className="pricing__card-header">
             <h2 className="pricing__plan-name">無料</h2>
             <div className="pricing__price">
@@ -55,13 +72,19 @@ export default function Pricing() {
             </div>
             <p className="pricing__limit">ゲスト：3回/日・登録後：10回/日</p>
           </div>
-          <button className="pricing__btn pricing__btn--free" onClick={() => navigate('/signup')}>
-            無料で登録する
-          </button>
+          {!user && (
+            <button className="pricing__btn pricing__btn--free" onClick={() => navigate('/signup')}>
+              無料で登録する
+            </button>
+          )}
         </div>
 
         <div className="pricing__card pricing__card--premium">
-          <div className="pricing__badge">おすすめ</div>
+          {isPremium ? (
+            <div className="pricing__current-badge pricing__current-badge--premium">現在のプラン</div>
+          ) : (
+            <div className="pricing__badge">おすすめ</div>
+          )}
           <div className="pricing__card-header">
             <h2 className="pricing__plan-name">プレミアム</h2>
             <div className="pricing__price">
@@ -70,13 +93,15 @@ export default function Pricing() {
             </div>
             <p className="pricing__limit">解析回数：無制限</p>
           </div>
-          <button
-            className="pricing__btn pricing__btn--premium"
-            onClick={handleSubscribe}
-            disabled={loading}
-          >
-            {loading ? '処理中...' : '始める'}
-          </button>
+          {!isPremium && (
+            <button
+              className="pricing__btn pricing__btn--premium"
+              onClick={handleSubscribe}
+              disabled={loading}
+            >
+              {loading ? '処理中...' : '始める'}
+            </button>
+          )}
         </div>
       </div>
 
@@ -92,11 +117,7 @@ export default function Pricing() {
           <tbody>
             {FEATURES.map((f) => (
               <tr key={f.label} className="pricing__tr">
-                <td className="pricing__td pricing__td--feature">
-                  {f.label === '1日の解析回数' ? (
-                    <span>{f.label}</span>
-                  ) : f.label}
-                </td>
+                <td className="pricing__td pricing__td--feature">{f.label}</td>
                 <td className="pricing__td">
                   {f.label === '1日の解析回数' ? (
                     <span className="pricing__limit-text">3回（ゲスト）<br />10回（登録）</span>
