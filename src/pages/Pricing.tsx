@@ -62,18 +62,18 @@ export default function Pricing() {
       <div className="pricing__cards">
         <div className="pricing__card">
           {!isPremium && user && (
-            <div className="pricing__current-badge">現在のプラン</div>
+            <div className="pricing__current-badge" translate="no">現在のプラン</div>
           )}
           <div className="pricing__card-header">
-            <h2 className="pricing__plan-name">無料</h2>
+            <h2 className="pricing__plan-name" translate="no">無料</h2>
             <div className="pricing__price">
               <span className="pricing__amount">0</span>
-              <span className="pricing__unit">円/月</span>
+              <span className="pricing__unit" translate="no">円/月</span>
             </div>
-            <p className="pricing__limit">ゲスト：3回/日・登録後：10回/日</p>
+            <p className="pricing__limit" translate="no">ゲスト：3回/日・登録後：10回/日</p>
           </div>
           {!user && (
-            <button className="pricing__btn pricing__btn--free" onClick={() => navigate('/signup')}>
+            <button className="pricing__btn pricing__btn--free" onClick={() => navigate('/signup')} translate="no">
               無料で登録する
             </button>
           )}
@@ -81,23 +81,24 @@ export default function Pricing() {
 
         <div className="pricing__card pricing__card--premium">
           {isPremium ? (
-            <div className="pricing__current-badge pricing__current-badge--premium">現在のプラン</div>
+            <div className="pricing__current-badge pricing__current-badge--premium" translate="no">現在のプラン</div>
           ) : (
-            <div className="pricing__badge">おすすめ</div>
+            <div className="pricing__badge" translate="no">おすすめ</div>
           )}
           <div className="pricing__card-header">
-            <h2 className="pricing__plan-name">プレミアム</h2>
+            <h2 className="pricing__plan-name" translate="no">プレミアム</h2>
             <div className="pricing__price">
               <span className="pricing__amount">980</span>
-              <span className="pricing__unit">円/月</span>
+              <span className="pricing__unit" translate="no">円/月</span>
             </div>
-            <p className="pricing__limit">解析回数：無制限</p>
+            <p className="pricing__limit" translate="no">解析回数：無制限</p>
           </div>
           {!isPremium && (
             <button
               className="pricing__btn pricing__btn--premium"
               onClick={handleSubscribe}
               disabled={loading}
+              translate="no"
             >
               {loading ? '処理中...' : '始める'}
             </button>
