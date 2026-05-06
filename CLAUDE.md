@@ -26,7 +26,9 @@
 ### バックエンド
 - `backend/main.py` — FastAPIアプリ本体
 - `backend/core/config.py` — 環境変数設定
-- `backend/routers/analysis.py` — `/api/v1/analyze` エンドポイント。プレミアムユーザーのみai_detectionを追加実行
+- `backend/routers/analysis.py` — `/api/v1/analyze` エンドポイント。プレミアムユーザーのみnoise_consistency・dct_splicingを追加実行
+- `backend/services/noise_consistency_service.py` — ノイズ整合性解析。ブロック間のノイズパターン不整合をヒートマップで可視化。プレミアム限定
+- `backend/services/dct_splicing_service.py` — DCTスプライシング検出。周波数係数の統計的異常をヒートマップで可視化。プレミアム限定
 - `backend/requirements.txt` — transformers・torch追加（ai_detection削除後も残存。不要なら削除可）
 - `backend/services/exif_service.py` — Exifメタデータ解析・AIツール署名チェック。値が存在するフィールドのみ日本語ラベルで表示、技術的内部フィールドは非表示
 - `backend/services/ela_service.py` — ELA解析（局所ホットスポット検出含む）
@@ -183,10 +185,12 @@ AIが生成したフェイク画像・動画、および人為的に加工され
 - ノイズ残差マップ
 - 差分検出・類似度比較（2枚比較）
 
+**解析機能（有料・実装済み）:**
+- ノイズ整合性解析（noise_consistency_service）プレミアムのみ
+- DCTスプライシング検出（dct_splicing_service）プレミアムのみ
+
 **解析機能（有料・未実装）:**
 - 同一人物判定（face_recognition）
-- ノイズ整合性解析
-- スプライシング検出
 - 照明・影の整合性
 
 **インフラ:**

@@ -16,6 +16,8 @@ export interface FullAnalysis {
   prnu: AnalysisResult;
   texture: AnalysisResult;
   noise: AnalysisResult;
+  noise_consistency?: AnalysisResult;
+  dct_splicing?: AnalysisResult;
   ai_score: number;
   ai_label: 'clean' | 'warning' | 'suspicious';
   manipulation_score: number;

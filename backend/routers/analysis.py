@@ -4,8 +4,9 @@ from services import (
     pixel_stats_service, manipulation_service,
     face_service, ai_features_service, prnu_service,
     texture_service, noise_service,
+    noise_consistency_service, dct_splicing_service,
 )
-from dependencies.auth import check_usage
+from dependencies.auth import check_usage, _is_premium, _supabase
 
 router = APIRouter(tags=["analysis"])
 
@@ -46,6 +47,11 @@ async def analyze_image(file: UploadFile = File(...), user=Depends(check_usage))
         "texture":         texture_service.analyze(image_bytes),
         "noise":           noise_service.analyze(image_bytes),
     }
+
+    is_premium = user is not None and _is_premium(_supabase(), user.id)
+    if is_premium:
+        results["noise_consistency"] = noise_consistency_service.analyze(image_bytes)
+        results["dct_splicing"]      = dct_splicing_service.analyze(image_bytes)
 
     ai_score,           ai_label           = _score_label(results, AI_KEYS)
     manipulation_score, manipulation_label = _score_label(results, MANIPULATION_KEYS)
