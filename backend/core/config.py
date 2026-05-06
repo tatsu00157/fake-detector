@@ -9,6 +9,9 @@ class Settings(BaseSettings):
     max_file_size_mb: int = 20
     supabase_url: str = ""
     supabase_service_role_key: str = ""
+    stripe_secret_key: str = ""
+    stripe_webhook_secret: str = ""
+    stripe_price_id: str = ""
 
 
 settings = Settings()

@@ -61,10 +61,18 @@
 - `src/pages/Home.tsx` — ゲスト3回/日・無料登録10回/日の利用制限。上限時はページ内に登録促進バナーを表示
 - `src/api/client.ts` — 全APIリクエストにSupabase JWTを付与
 
-### バックエンド（認証）
-- `backend/dependencies/auth.py` — JWT検証・無料利用回数チェック（1日10回）
+### バックエンド（認証・決済）
+- `backend/dependencies/auth.py` — JWT検証・無料利用回数チェック（1日10回）・プレミアム判定
 - `backend/routers/analysis.py` / `compare.py` — 認証依存関係を追加
-- `supabase/schema.sql` — usage_logsテーブル定義（Supabase SQLエディタで実行）
+- `backend/routers/stripe_router.py` — Stripe Checkout・ポータル・Webhookエンドポイント
+- `backend/core/config.py` — Stripe環境変数（stripe_secret_key・stripe_webhook_secret・stripe_price_id）追加
+- `backend/requirements.txt` — stripe==10.12.0 追加
+- `supabase/schema.sql` — usage_logs・subscriptionsテーブル定義（Supabase SQLエディタで実行）
+
+### フロントエンド（決済）
+- `src/pages/Pricing.tsx` — 料金プランページ（無料・プレミアム980円/月）。Stripe Checkoutへリダイレクト
+- `src/api/client.ts` — createCheckoutSession・createPortalSession API追加
+- `src/App.tsx` — /pricingルート追加
 
 ## プロジェクト概要
 

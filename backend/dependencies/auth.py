@@ -7,6 +7,13 @@ from typing import Optional
 FREE_LIMIT = 10
 
 
+def _is_premium(sb, user_id: str) -> bool:
+    result = sb.table("subscriptions").select("status").eq("user_id", user_id).execute()
+    if result.data and result.data[0].get("status") == "active":
+        return True
+    return False
+
+
 def _supabase():
     return create_client(settings.supabase_url, settings.supabase_service_role_key)
 
@@ -31,6 +38,9 @@ async def check_usage(user=Depends(optional_auth)):
     uid = user.id
 
     result = sb.table("usage_logs").select("id, count").eq("user_id", uid).eq("date", today).execute()
+
+    if _is_premium(sb, uid):
+        return user
 
     if result.data:
         row = result.data[0]

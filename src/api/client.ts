@@ -30,3 +30,19 @@ export async function compareImages(file1: File, file2: File) {
   body.append('file2', file2);
   return handleResponse(await fetch(`${API_BASE}/compare`, { method: 'POST', headers, body }));
 }
+
+export async function createCheckoutSession() {
+  const headers = await getAuthHeader();
+  return handleResponse(await fetch(`${API_BASE}/stripe/checkout`, {
+    method: 'POST',
+    headers,
+  }));
+}
+
+export async function createPortalSession() {
+  const headers = await getAuthHeader();
+  return handleResponse(await fetch(`${API_BASE}/stripe/portal`, {
+    method: 'POST',
+    headers,
+  }));
+}
