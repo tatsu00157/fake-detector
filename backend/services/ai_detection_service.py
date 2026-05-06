@@ -11,7 +11,7 @@ def _get_pipe():
     global _pipe
     if _pipe is None:
         from transformers import pipeline
-        _pipe = pipeline("image-classification", model="Nahrawy/AIorNot")
+        _pipe = pipeline("image-classification", model="dima806/ai_vs_real_image_detection")
     return _pipe
 
 
@@ -30,6 +30,10 @@ def analyze(image_bytes: bytes) -> dict:
     try:
         pipe = _get_pipe()
         image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        buf = io.BytesIO()
+        image.save(buf, format="JPEG", quality=95)
+        buf.seek(0)
+        image = Image.open(buf).convert("RGB")
         results = pipe(image)
 
         ai_score = _find_ai_score(results)
