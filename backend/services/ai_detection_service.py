@@ -3,13 +3,23 @@ import io
 
 _pipe = None
 
+_AI_LABEL_KEYWORDS = {"artificial", "ai", "generated", "fake", "ai-generated", "label_1"}
+
 
 def _get_pipe():
     global _pipe
     if _pipe is None:
         from transformers import pipeline
-        _pipe = pipeline("image-classification", model="umm-maybe/AI-image-detector")
+        _pipe = pipeline("image-classification", model="Nahrawy/AIorNot")
     return _pipe
+
+
+def _find_ai_score(results: list) -> float:
+    for r in results:
+        normalized = r["label"].lower().replace(" ", "-").replace("_", "-")
+        if any(kw in normalized for kw in _AI_LABEL_KEYWORDS):
+            return r["score"]
+    return results[0]["score"] if results else 0.0
 
 
 def analyze(image_bytes: bytes) -> dict:
@@ -18,7 +28,7 @@ def analyze(image_bytes: bytes) -> dict:
         image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
         results = pipe(image)
 
-        ai_score = next((r["score"] for r in results if r["label"] == "artificial"), 0.0)
+        ai_score = _find_ai_score(results)
         label = "suspicious" if ai_score > 0.7 else "warning" if ai_score > 0.4 else "clean"
 
         return {

@@ -27,7 +27,7 @@
 - `backend/main.py` — FastAPIアプリ本体
 - `backend/core/config.py` — 環境変数設定
 - `backend/routers/analysis.py` — `/api/v1/analyze` エンドポイント。プレミアムユーザーのみai_detectionを追加実行
-- `backend/services/ai_detection_service.py` — AI生成画像検出（HuggingFace umm-maybe/AI-image-detector・ViTモデル）。初回起動時にモデルをダウンロード（約90MB）。プレミアム限定
+- `backend/services/ai_detection_service.py` — AI生成画像検出（HuggingFace Nahrawy/AIorNot・ViTモデル）。初回起動時にモデルをダウンロード（約90MB）。プレミアム限定
 - `backend/requirements.txt` — transformers・torch追加
 - `backend/services/exif_service.py` — Exifメタデータ解析・AIツール署名チェック。値が存在するフィールドのみ日本語ラベルで表示、技術的内部フィールドは非表示
 - `backend/services/ela_service.py` — ELA解析（局所ホットスポット検出含む）
@@ -185,7 +185,7 @@ AIが生成したフェイク画像・動画、および人為的に加工され
 - 差分検出・類似度比較（2枚比較）
 
 **解析機能（有料・実装済み）:**
-- AI生成画像検出（umm-maybe/AI-image-detector・ViTモデル）プレミアムユーザーのみ実行
+- AI生成画像検出（Nahrawy/AIorNot・ViTモデル）プレミアムユーザーのみ実行
 
 **解析機能（有料・未実装）:**
 - 同一人物判定（face_recognition）
