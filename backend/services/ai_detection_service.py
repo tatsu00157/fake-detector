@@ -3,7 +3,8 @@ import io
 
 _pipe = None
 
-_AI_LABEL_KEYWORDS = {"artificial", "ai", "generated", "fake", "ai-generated", "label_1"}
+_AI_LABELS = {"ai", "artificial", "generated", "fake", "ai-generated", "label_1"}
+_REAL_LABELS = {"not-ai", "real", "not_ai", "notai", "label_0", "human"}
 
 
 def _get_pipe():
@@ -15,9 +16,12 @@ def _get_pipe():
 
 
 def _find_ai_score(results: list) -> float:
+    print(f"[ai_detection] raw results: {results}")
     for r in results:
         normalized = r["label"].lower().replace(" ", "-").replace("_", "-")
-        if any(kw in normalized for kw in _AI_LABEL_KEYWORDS):
+        if normalized in _REAL_LABELS:
+            return 1.0 - r["score"]
+        if normalized in _AI_LABELS:
             return r["score"]
     return results[0]["score"] if results else 0.0
 
