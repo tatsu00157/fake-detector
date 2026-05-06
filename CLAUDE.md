@@ -73,8 +73,10 @@
 - `src/pages/Pricing.tsx` — 料金プランページ（無料・プレミアム980円/月）。プランカード＋機能比較表（実装済みの5項目＋2枚比較のみ掲載）。Stripe Checkoutへリダイレクト。ログイン中はSubscriptionsテーブルを参照して現在のプランを「現在のプラン」バッジで表示。日本語テキストにtranslate="no"を設定してブラウザ自動翻訳を防止
 - `src/api/client.ts` — createCheckoutSession・createPortalSession API追加
 - `src/App.tsx` — /pricingルート追加
-- `src/components/Header.tsx` — 「料金プラン」リンクを全ユーザー向けに追加
+- `src/components/Header.tsx` — 「料金プラン」リンクを全ユーザー向けに追加。ログイン中は「ダッシュボード」リンクを表示
 - `src/pages/Home.tsx` — ゲスト制限バナーに「料金プランを見る」リンクを追加
+- `src/pages/Dashboard.tsx` — ダッシュボードページ。現在のプラン表示・プレミアムなら「プランを管理する・解約する」（Stripeポータル）・無料なら「アップグレード」ボタン
+- `src/App.tsx` — /dashboardルート追加
 
 ## プロジェクト概要
 

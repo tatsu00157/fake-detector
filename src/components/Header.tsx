@@ -15,7 +15,7 @@ export default function Header() {
           <Link to="/pricing" className="header-pricing">料金プラン</Link>
           {user ? (
             <>
-              <span className="header-email">{user.email}</span>
+              <Link to="/dashboard" className="header-pricing">ダッシュボード</Link>
               <button className="header-signout" onClick={signOut}>ログアウト</button>
             </>
           ) : (
