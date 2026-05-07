@@ -14,8 +14,8 @@ const FEATURES: Feature[] = [
   { label: 'ELA解析（加工箇所の検出）', free: true, premium: true },
   { label: 'ノイズ整合性解析（加工箇所の検出）', free: true, premium: true },
   { label: 'DCTスプライシング検出（合成痕跡の検出）', free: true, premium: true },
-  { label: 'ノイズ残差マップ（合成箇所の可視化）', free: false, premium: true },
   { label: '2枚比較（差分・類似度）', free: true, premium: true },
+  { label: 'ノイズ残差マップ（合成箇所の可視化）', free: false, premium: true },
   { label: 'PDFレポート出力', free: false, premium: true },
   { label: '解析履歴の保存', free: false, premium: true },
 ];
