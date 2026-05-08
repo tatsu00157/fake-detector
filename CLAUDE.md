@@ -52,7 +52,7 @@
 - `backend/requirements.txt` — 全依存パッケージ
 - `supabase/schema.sql` — usage_logs・subscriptionsテーブル定義（Supabase SQLエディタで実行）
 - AI判定スコア：3指標（Exif・テクスチャ・ノイズレベル）の平均
-- 加工判定スコア：3指標（ELA・ノイズ整合性・DCT）の平均
+- 加工判定スコア：4指標（ノイズ整合性・DCT・PRNU・ノイズCoV）の平均。ELAはスコア計算対象外・参考表示のみ
 
 ## プロジェクト概要
 

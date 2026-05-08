@@ -131,9 +131,14 @@ const EXPLANATIONS = [
     category: '加工検出',
     items: [
       {
-        label: 'ELA解析（Error Level Analysis）',
-        desc: 'JPEG圧縮の誤差レベルを可視化し、加工・編集された箇所を検出します。',
+        label: 'ELA解析（Error Level Analysis）※参考表示',
+        desc: 'JPEG圧縮の誤差レベルを可視化し、加工・編集された箇所を検出します。PNG・再圧縮済みJPEGでは信頼性が低いためスコア計算の対象外です。',
         how: '同じ条件で再圧縮したとき、加工された箇所は周囲と異なる誤差レベルを示します。マップ上で明るく光っている箇所が加工疑いの領域です。コピー&ペーストや消去ツールを使った箇所が浮き上がります。',
+      },
+      {
+        label: 'ノイズCoV（ノイズ変動係数）',
+        desc: '画像をブロックに分割し、各ブロックのノイズ分布の均一性を検査します。',
+        how: 'ノイズの変動係数（標準偏差÷平均）と外れ値ブロック率からスコアを算出します。合成・切り貼りされた箇所はノイズの統計特性が周囲と異なるため、この値が上昇します。',
       },
       {
         label: 'ノイズ整合性解析',
@@ -218,10 +223,11 @@ export default function ResultsDashboard({ analysis, comparison }: Props) {
             score={analysis.manipulation_score}
             label={analysis.manipulation_label}
             tabs={[
-              { key: 'ela',               label: 'ELA',           result: analysis.ela },
-              { key: 'noise_consistency', label: 'ノイズ整合性',  result: analysis.noise_consistency },
-              { key: 'dct',               label: 'DCT',           result: analysis.dct_splicing },
+              { key: 'noise_consistency', label: 'ノイズ整合性',    result: analysis.noise_consistency },
+              { key: 'dct',               label: 'DCT',             result: analysis.dct_splicing },
               ...(analysis.prnu ? [{ key: 'prnu', label: 'ノイズ残差マップ', result: analysis.prnu }] : []),
+              { key: 'manipulation',      label: 'ノイズCoV',       result: analysis.manipulation },
+              { key: 'ela',               label: 'ELA（参考）',     result: analysis.ela },
             ]}
           />
           <ExplanationsSection />

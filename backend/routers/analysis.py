@@ -13,7 +13,7 @@ ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 MAX_BYTES = 20 * 1024 * 1024
 
 AI_KEYS           = ["exif", "texture", "noise"]
-MANIPULATION_KEYS = ["ela", "noise_consistency", "dct_splicing"]
+MANIPULATION_KEYS = ["manipulation", "noise_consistency", "dct_splicing", "prnu"]
 
 
 def _validate(file: UploadFile):
