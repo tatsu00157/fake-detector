@@ -59,7 +59,7 @@ def analyze(image_bytes: bytes) -> dict:
 
         if not tags:
             return {
-                "score": 0.2,
+                "score": 0.6,
                 "label": "warning",
                 "details": {
                     "カメラ情報": "なし（AI生成画像はカメラ情報を持たないことが多い）",

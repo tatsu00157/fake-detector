@@ -36,7 +36,7 @@
 - `backend/routers/analysis.py` — `/api/v1/analyze` エンドポイント。認証不要・全解析（PRNU含む）を全ユーザーに実行
 - `backend/routers/compare.py` — `/api/v1/compare` エンドポイント。認証不要
 - `backend/routers/stripe_router.py` — 未使用（コードは保持）
-- `backend/services/exif_service.py` — Exifメタデータ解析・AIツール署名チェック。値が存在するフィールドのみ日本語ラベルで表示
+- `backend/services/exif_service.py` — Exifメタデータ解析・AIツール署名チェック。値が存在するフィールドのみ日本語ラベルで表示。メタデータなし→スコア0.6（カメラ情報の完全欠如はAI疑い）
 - `backend/services/ela_service.py` — ELA解析（局所ホットスポット検出含む）
 - `backend/services/texture_service.py` — 局所テクスチャ分散マップ。不自然に滑らかな領域を赤でハイライト（AI生成画像に特有）
 - `backend/services/noise_service.py` — ノイズレベル解析。ノイズが少なすぎる領域を赤でハイライト（AI生成画像に特有）
