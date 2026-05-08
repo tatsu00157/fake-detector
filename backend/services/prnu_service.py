@@ -45,7 +45,6 @@ def analyze(image_bytes: bytes) -> dict:
         noise = _noise_residual(gray)
         heatmap = _inconsistency_map(noise)
 
-        anomaly_ratio = float(np.mean(heatmap > 0.5))
         score = min(float(np.mean(heatmap)) * 3.0, 1.0)
 
         # オーバーレイ画像生成（赤でハイライト）
@@ -70,8 +69,8 @@ def analyze(image_bytes: bytes) -> dict:
             "score": float(score),
             "label": get_label(score),
             "details": {
-                "不整合領域の割合": f"{round(anomaly_ratio * 100, 1)}%",
                 "判定": judgment,
+                "見方": "赤くハイライトされた箇所がノイズ残差の不整合を示しています",
             },
             "image": f"data:image/png;base64,{img_b64}",
         }

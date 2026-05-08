@@ -53,7 +53,6 @@ def analyze(image_bytes: bytes) -> dict:
             "label": label,
             "image": img_b64,
             "details": {
-                "不整合領域の割合": f"{round(inconsistent_ratio * 100, 1)}%",
                 "判定": "ノイズパターンに不整合あり（合成の疑い）" if score > 0.6 else "やや不整合あり" if score > 0.3 else "ノイズパターンは整合",
                 "見方": "赤くハイライトされた箇所がノイズパターンの不整合を示しています",
             },
