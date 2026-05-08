@@ -54,7 +54,7 @@ def analyze(image_bytes: bytes) -> dict:
             "image": img_b64,
             "details": {
                 "判定": "ノイズパターンに不整合あり（合成の疑い）" if score > 0.6 else "やや不整合あり" if score > 0.3 else "ノイズパターンは整合",
-                "見方": "赤くハイライトされた箇所がノイズパターンの不整合を示しています",
+                "解説": "赤くハイライトされた箇所がノイズパターンの不整合を示しています",
             },
         }
     except Exception as e:

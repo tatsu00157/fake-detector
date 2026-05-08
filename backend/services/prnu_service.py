@@ -70,7 +70,7 @@ def analyze(image_bytes: bytes) -> dict:
             "label": get_label(score),
             "details": {
                 "判定": judgment,
-                "見方": "赤くハイライトされた箇所がノイズ残差の不整合を示しています",
+                "解説": "赤くハイライトされた箇所がノイズ残差の不整合を示しています",
             },
             "image": f"data:image/png;base64,{img_b64}",
         }

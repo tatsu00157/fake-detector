@@ -56,7 +56,7 @@ def analyze(image_bytes: bytes) -> dict:
             "image": img_b64,
             "details": {
                 "判定": "周波数統計に異常あり（合成の疑い）" if score > 0.6 else "やや異常あり" if score > 0.3 else "周波数統計は正常",
-                "見方": "赤くハイライトされた箇所が周波数統計の異常を示しています",
+                "解説": "赤くハイライトされた箇所が周波数統計の異常を示しています",
             },
         }
     except Exception as e:
