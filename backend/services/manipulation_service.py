@@ -1,6 +1,7 @@
 import io
+import base64
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
 from .base import get_label, error_result
 
 
@@ -19,10 +20,13 @@ def analyze(image_bytes: bytes) -> dict:
         block = 32
         h, w = gray.shape
         noises = []
+        positions = []
+
         for y in range(0, h - block, block):
             for x in range(0, w - block, block):
                 patch = gray[y:y + block, x:x + block]
                 noises.append(_block_noise(patch))
+                positions.append((x, y))
 
         if len(noises) < 4:
             return {"score": 0.0, "label": "clean", "details": {"note": "画像が小さすぎます"}, "image": None}
@@ -32,11 +36,21 @@ def analyze(image_bytes: bytes) -> dict:
         std_noise = float(np.std(noises))
         cov = std_noise / (mean_noise + 1e-8)
 
-        # 外れ値ブロック（ノイズが平均±2σを超える）の割合
-        outlier_ratio = float(np.sum(np.abs(noises - mean_noise) > 2 * std_noise) / len(noises))
+        outlier_mask = np.abs(noises - mean_noise) > 2 * std_noise
+        outlier_ratio = float(np.sum(outlier_mask) / len(noises))
 
-        # CoV > 1.0 で強い不整合、outlier_ratio > 0.1 で怪しいブロックが多い
         score = min((cov / 1.2 * 0.7) + (outlier_ratio / 0.15 * 0.3), 1.0)
+
+        overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
+        draw = ImageDraw.Draw(overlay)
+        for (x, y), is_outlier in zip(positions, outlier_mask):
+            if is_outlier:
+                draw.rectangle([x, y, x + block - 1, y + block - 1], fill=(255, 0, 0, 160))
+
+        combined = Image.alpha_composite(img.convert("RGBA"), overlay)
+        out = io.BytesIO()
+        combined.convert("RGB").save(out, format="PNG")
+        img_b64 = base64.b64encode(out.getvalue()).decode()
 
         return {
             "score": float(score),
@@ -49,7 +63,7 @@ def analyze(image_bytes: bytes) -> dict:
                 "block_count": len(noises),
                 "note": "ノイズ分布の不整合は合成・切り貼りの痕跡です",
             },
-            "image": None,
+            "image": f"data:image/png;base64,{img_b64}",
         }
     except Exception as e:
         return error_result(str(e))
