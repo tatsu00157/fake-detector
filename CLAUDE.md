@@ -29,7 +29,8 @@
 - `src/pages/Login.tsx` — ログインページ。下部に新規登録へのリンク
 - `src/pages/Signup.tsx` — 新規登録ページ。パスワード表示切替・要件リアルタイム表示（8文字以上・英字・数字・記号）・パスワード確認欄
 - `src/pages/Dashboard.tsx` — ダッシュボードページ。ログイン中のメールアドレスを表示
-- `public/index.html` — lang="ja"設定・タイトルをFakeScanに変更
+- `public/index.html` — lang="ja"設定・タイトルをFakeScanに変更・SVGファビコン設定
+- `public/favicon.svg` — ネイビー背景＋ピンク虫眼鏡のSVGファビコン
 - ブランドカラー：ピンク（`#f472b6`）を登録系CTAボタンに使用
 
 ### バックエンド
