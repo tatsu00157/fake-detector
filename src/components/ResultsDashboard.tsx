@@ -111,6 +111,9 @@ export default function ResultsDashboard({ analysis, comparison }: Props) {
 
   return (
     <div className="results">
+      <div className="results__disclaimer">
+        ⚠️ 解析結果はあくまで参考情報です。各指標は可能性を示すものであり、画像の真正性を断定するものではありません。複数の指標を組み合わせて総合的に判断してください。
+      </div>
       {analysis && (
         <>
           <TabSection

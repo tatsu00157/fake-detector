@@ -1400,6 +1400,18 @@ body {
   line-height: 1.5;
 }
 
+/* ===== Results Disclaimer ===== */
+.results__disclaimer {
+  background: #fffbeb;
+  border: 1px solid #fbbf24;
+  border-radius: 8px;
+  padding: 0.85rem 1.1rem;
+  font-size: 0.88rem;
+  color: #92400e;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
 /* ===== Legal Pages ===== */
 .legal-page {
   flex: 1;
