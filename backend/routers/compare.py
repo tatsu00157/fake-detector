@@ -1,6 +1,5 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
+from fastapi import APIRouter, UploadFile, File, HTTPException
 from services import diff_service, similarity_service
-from dependencies.auth import check_usage
 
 router = APIRouter(tags=["compare"])
 
@@ -14,7 +13,7 @@ def _validate(file: UploadFile):
 
 
 @router.post("/compare")
-async def compare_images(file1: UploadFile = File(...), file2: UploadFile = File(...), _user=Depends(check_usage)):
+async def compare_images(file1: UploadFile = File(...), file2: UploadFile = File(...)):
     _validate(file1)
     _validate(file2)
 
