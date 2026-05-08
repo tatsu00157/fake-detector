@@ -15,15 +15,32 @@ export default function Home() {
   const [analysis, setAnalysis] = useState<FullAnalysis | null>(null);
   const [comparison, setComparison] = useState<ComparisonAnalysis | null>(null);
 
-  const handleSingleFile = async (newFiles: File[]) => {
+  const handleSingleFile = (newFiles: File[]) => {
     setError(null);
+    setAnalysis(null);
     const file = newFiles[0];
     setFiles([file, null]);
     setPreviews([URL.createObjectURL(file), null]);
+  };
+
+  const handleCompareFile = (index: number, newFiles: File[]) => {
+    setError(null);
+    setComparison(null);
+    const updatedFiles: (File | null)[] = [...files];
+    const updatedPreviews: (string | null)[] = [...previews];
+    updatedFiles[index] = newFiles[0];
+    updatedPreviews[index] = URL.createObjectURL(newFiles[0]);
+    setFiles(updatedFiles);
+    setPreviews(updatedPreviews);
+  };
+
+  const handleAnalyze = async () => {
+    if (!files[0]) return;
+    setError(null);
     setAnalysis(null);
     setLoading(true);
     try {
-      setAnalysis(await analyzeImage(file));
+      setAnalysis(await analyzeImage(files[0]));
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : '解析中にエラーが発生しました');
     } finally {
@@ -31,25 +48,17 @@ export default function Home() {
     }
   };
 
-  const handleCompareFile = async (index: number, newFiles: File[]) => {
+  const handleCompare = async () => {
+    if (!files[0] || !files[1]) return;
     setError(null);
-    const updatedFiles: (File | null)[] = [...files];
-    const updatedPreviews: (string | null)[] = [...previews];
-    updatedFiles[index] = newFiles[0];
-    updatedPreviews[index] = URL.createObjectURL(newFiles[0]);
-    setFiles(updatedFiles);
-    setPreviews(updatedPreviews);
     setComparison(null);
-
-    if (updatedFiles[0] && updatedFiles[1]) {
-      setLoading(true);
-      try {
-        setComparison(await compareImages(updatedFiles[0], updatedFiles[1]));
-      } catch (e: unknown) {
-        setError(e instanceof Error ? e.message : '解析中にエラーが発生しました');
-      } finally {
-        setLoading(false);
-      }
+    setLoading(true);
+    try {
+      setComparison(await compareImages(files[0], files[1]));
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : '解析中にエラーが発生しました');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -76,6 +85,8 @@ export default function Home() {
     setMode(next);
     handleReset();
   };
+
+  const canAnalyze = mode === 'single' ? !!files[0] : !!(files[0] && files[1]);
 
   return (
     <main className="home">
@@ -107,9 +118,12 @@ export default function Home() {
             </div>
             {files[0] && previews[0] && (
               <div className="upload-slot">
-                <div className="preview-box">
+                <div className={`preview-box${loading ? ' preview-box--scanning' : ''}`}>
                   <img src={previews[0]} alt="preview" className="preview-box__img" />
-                  <button className="preview-box__delete" onClick={handleReset}>削除</button>
+                  {loading && <div className="scan-line" />}
+                  {!loading && (
+                    <button className="preview-box__delete" onClick={handleReset}>削除</button>
+                  )}
                 </div>
               </div>
             )}
@@ -122,9 +136,12 @@ export default function Home() {
               {([0, 1] as const).map((i) => (
                 <div key={i} className="upload-slot">
                   {previews[i] ? (
-                    <div className="preview-box">
+                    <div className={`preview-box${loading ? ' preview-box--scanning' : ''}`}>
                       <img src={previews[i]!} alt={`preview ${i + 1}`} className="preview-box__img" />
-                      <button className="preview-box__delete" onClick={() => handleRemoveSlot(i)}>削除</button>
+                      {loading && <div className="scan-line" />}
+                      {!loading && (
+                        <button className="preview-box__delete" onClick={() => handleRemoveSlot(i)}>削除</button>
+                      )}
                     </div>
                   ) : (
                     <UploadZone
@@ -143,14 +160,27 @@ export default function Home() {
             )}
           </>
         )}
-      </div>
 
-      {loading && (
-        <div className="loading">
-          <div className="loading__spinner" />
-          <p>解析中...</p>
-        </div>
-      )}
+        {canAnalyze && !loading && (
+          <div className="analyze-action">
+            <button
+              className="analyze-btn"
+              onClick={mode === 'single' ? handleAnalyze : handleCompare}
+            >
+              {mode === 'single' ? '解析する' : '比較する'}
+            </button>
+          </div>
+        )}
+
+        {loading && (
+          <div className="scanning-status">
+            <span className="scanning-status__dot" />
+            <span className="scanning-status__dot" />
+            <span className="scanning-status__dot" />
+            <p>スキャン中...</p>
+          </div>
+        )}
+      </div>
 
       {error && <div className="error-banner"><strong>エラー: </strong>{error}</div>}
 

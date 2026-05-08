@@ -357,6 +357,92 @@ body {
   }
 }
 
+/* ===== Scan Animation ===== */
+@keyframes scanMove {
+  0%   { top: -4px; opacity: 0.9; }
+  50%  { opacity: 1; }
+  100% { top: 100%; opacity: 0.6; }
+}
+
+@keyframes scanPulse {
+  0%, 100% { border-color: #3b82f6; }
+  50%       { border-color: #60a5fa; }
+}
+
+.preview-box--scanning {
+  animation: scanPulse 1.2s ease-in-out infinite;
+}
+
+.scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #3b82f6, #60a5fa, #3b82f6, transparent);
+  box-shadow: 0 0 12px 4px rgba(59, 130, 246, 0.5);
+  animation: scanMove 1.6s ease-in-out infinite;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ===== Analyze Button ===== */
+.analyze-action {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.analyze-btn {
+  padding: 0.75rem 3rem;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: background 0.15s, transform 0.1s;
+  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.35);
+}
+
+.analyze-btn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.analyze-btn:active {
+  transform: translateY(0);
+}
+
+/* ===== Scanning Status ===== */
+@keyframes dotBounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40%            { transform: translateY(-6px); opacity: 1; }
+}
+
+.scanning-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 1.25rem;
+  color: #3b82f6;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.scanning-status__dot {
+  width: 7px;
+  height: 7px;
+  background: #3b82f6;
+  border-radius: 50%;
+  animation: dotBounce 1.2s ease-in-out infinite;
+}
+
+.scanning-status__dot:nth-child(2) { animation-delay: 0.2s; }
+.scanning-status__dot:nth-child(3) { animation-delay: 0.4s; }
+
 /* ===== Guest Limit ===== */
 .guest-limit {
   margin: 1.5rem 0;
