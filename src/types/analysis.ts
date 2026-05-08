@@ -19,6 +19,7 @@ export interface FullAnalysis {
   noise_consistency: AnalysisResult;
   dct_splicing: AnalysisResult;
   prnu?: AnalysisResult;
+  c2pa: AnalysisResult;
   ai_score: number;
   ai_label: 'clean' | 'warning' | 'suspicious';
   manipulation_score: number;

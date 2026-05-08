@@ -121,6 +121,7 @@ export default function ResultsDashboard({ analysis, comparison }: Props) {
               { key: 'exif',    label: 'メタデータ',   result: analysis.exif },
               { key: 'texture', label: 'テクスチャ',   result: analysis.texture },
               { key: 'noise',   label: 'ノイズレベル', result: analysis.noise },
+              { key: 'c2pa',    label: 'C2PA署名',     result: analysis.c2pa },
             ]}
           />
           <TabSection

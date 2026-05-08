@@ -5,6 +5,7 @@ from services import (
     face_service, ai_features_service, prnu_service,
     texture_service, noise_service,
     noise_consistency_service, dct_splicing_service,
+    c2pa_service,
 )
 
 router = APIRouter(tags=["analysis"])
@@ -47,6 +48,7 @@ async def analyze_image(file: UploadFile = File(...)):
         "noise_consistency":  noise_consistency_service.analyze(image_bytes),
         "dct_splicing":       dct_splicing_service.analyze(image_bytes),
         "prnu":               prnu_service.analyze(image_bytes),
+        "c2pa":               c2pa_service.analyze(image_bytes),
     }
 
     ai_score,           ai_label           = _score_label(results, AI_KEYS)
