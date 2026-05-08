@@ -1,52 +1,22 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import UploadZone from '../components/UploadZone';
 import ResultsDashboard from '../components/ResultsDashboard';
 import { analyzeImage, compareImages } from '../api/client';
-import { useAuth } from '../context/AuthContext';
 import { FullAnalysis, ComparisonAnalysis } from '../types/analysis';
 
 type Mode = 'single' | 'compare';
 
-const GUEST_LIMIT = 3;
-
-function getGuestCount(): number {
-  const today = new Date().toDateString();
-  const stored = localStorage.getItem('guest_usage');
-  if (!stored) return 0;
-  const { date, count } = JSON.parse(stored);
-  return date === today ? count : 0;
-}
-
-function incrementGuestCount(): void {
-  const today = new Date().toDateString();
-  const current = getGuestCount();
-  localStorage.setItem('guest_usage', JSON.stringify({ date: today, count: current + 1 }));
-}
-
 export default function Home() {
-  const { user } = useAuth();
-  const navigate = useNavigate();
   const [mode, setMode] = useState<Mode>('single');
   const [previews, setPreviews] = useState<string[]>([]);
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [guestLimitReached, setGuestLimitReached] = useState(false);
   const [analysis, setAnalysis] = useState<FullAnalysis | null>(null);
   const [comparison, setComparison] = useState<ComparisonAnalysis | null>(null);
 
   const handleFiles = async (newFiles: File[]) => {
-    if (!user) {
-      if (getGuestCount() >= GUEST_LIMIT) {
-        setGuestLimitReached(true);
-        return;
-      }
-      incrementGuestCount();
-    }
-
     setError(null);
-    setGuestLimitReached(false);
 
     if (mode === 'compare') {
       const updated = [...files, ...newFiles].slice(0, 2);
@@ -86,7 +56,6 @@ export default function Home() {
     setAnalysis(null);
     setComparison(null);
     setError(null);
-    setGuestLimitReached(false);
   };
 
   const handleReset = () => {
@@ -95,7 +64,6 @@ export default function Home() {
     setAnalysis(null);
     setComparison(null);
     setError(null);
-    setGuestLimitReached(false);
   };
 
   return (
@@ -143,18 +111,6 @@ export default function Home() {
           </p>
         )}
       </div>
-
-      {guestLimitReached && (
-        <div className="guest-limit">
-          <p className="guest-limit__text">ゲストの無料利用回数（{GUEST_LIMIT}回/日）に達しました</p>
-          <p className="guest-limit__sub">無料登録すると1日10回まで利用できます</p>
-          <div className="guest-limit__actions">
-            <button className="guest-limit__signup" onClick={() => navigate('/signup')}>無料で登録する</button>
-            <button className="guest-limit__login" onClick={() => navigate('/login')}>ログイン</button>
-          </div>
-          <button className="guest-limit__pricing" onClick={() => navigate('/pricing')}>料金プランを見る</button>
-        </div>
-      )}
 
       {loading && (
         <div className="loading">
