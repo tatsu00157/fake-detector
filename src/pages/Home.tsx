@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import UploadZone from '../components/UploadZone';
 import ResultsDashboard from '../components/ResultsDashboard';
+import ExplanationsSection from '../components/ExplanationsSection';
 import { analyzeImage, compareImages } from '../api/client';
 import { FullAnalysis, ComparisonAnalysis } from '../types/analysis';
 
@@ -185,6 +186,7 @@ export default function Home() {
       {error && <div className="error-banner"><strong>エラー: </strong>{error}</div>}
 
       <ResultsDashboard analysis={analysis} comparison={comparison} />
+      <ExplanationsSection />
     </main>
   );
 }
