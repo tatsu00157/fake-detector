@@ -41,7 +41,6 @@ def analyze(image_bytes: bytes) -> dict:
             "score": float(score),
             "label": get_label(score),
             "details": {
-                "滑らか度": round(overall_score, 4),
                 "解説": "赤い箇所が不自然に滑らかな領域（AI画像に特有）",
             },
             "image": f"data:image/png;base64,{img_b64}",

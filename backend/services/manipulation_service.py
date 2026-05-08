@@ -52,16 +52,19 @@ def analyze(image_bytes: bytes) -> dict:
         combined.convert("RGB").save(out, format="PNG")
         img_b64 = base64.b64encode(out.getvalue()).decode()
 
+        if score >= 0.6:
+            judgment = "ノイズ分布に強い不整合あり（合成・切り貼りの疑い）"
+        elif score >= 0.3:
+            judgment = "一部にノイズ分布の乱れがあります"
+        else:
+            judgment = "ノイズ分布は正常です"
+
         return {
             "score": float(score),
             "label": get_label(score),
             "details": {
-                "noise_mean": round(mean_noise, 3),
-                "noise_std": round(std_noise, 3),
-                "noise_cov": round(cov, 4),
-                "outlier_blocks": round(outlier_ratio, 4),
-                "block_count": len(noises),
-                "note": "ノイズ分布の不整合は合成・切り貼りの痕跡です",
+                "判定": judgment,
+                "解説": "ブロックごとのノイズ量を比較し、極端に外れた箇所を赤でハイライト。合成・切り貼りの痕跡を示します。",
             },
             "image": f"data:image/png;base64,{img_b64}",
         }
