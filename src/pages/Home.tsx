@@ -8,39 +8,43 @@ type Mode = 'single' | 'compare';
 
 export default function Home() {
   const [mode, setMode] = useState<Mode>('single');
-  const [previews, setPreviews] = useState<string[]>([]);
-  const [files, setFiles] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<(string | null)[]>([null, null]);
+  const [files, setFiles] = useState<(File | null)[]>([null, null]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<FullAnalysis | null>(null);
   const [comparison, setComparison] = useState<ComparisonAnalysis | null>(null);
 
-  const handleFiles = async (newFiles: File[]) => {
+  const handleSingleFile = async (newFiles: File[]) => {
     setError(null);
+    const file = newFiles[0];
+    setFiles([file, null]);
+    setPreviews([URL.createObjectURL(file), null]);
+    setAnalysis(null);
+    setLoading(true);
+    try {
+      setAnalysis(await analyzeImage(file));
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : '解析中にエラーが発生しました');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    if (mode === 'compare') {
-      const updated = [...files, ...newFiles].slice(0, 2);
-      setFiles(updated);
-      setPreviews(updated.map((f) => URL.createObjectURL(f)));
+  const handleCompareFile = async (index: number, newFiles: File[]) => {
+    setError(null);
+    const updatedFiles: (File | null)[] = [...files];
+    const updatedPreviews: (string | null)[] = [...previews];
+    updatedFiles[index] = newFiles[0];
+    updatedPreviews[index] = URL.createObjectURL(newFiles[0]);
+    setFiles(updatedFiles);
+    setPreviews(updatedPreviews);
+    setComparison(null);
 
-      if (updated.length === 2) {
-        setLoading(true);
-        setComparison(null);
-        try {
-          setComparison(await compareImages(updated[0], updated[1]));
-        } catch (e: unknown) {
-          setError(e instanceof Error ? e.message : '解析中にエラーが発生しました');
-        } finally {
-          setLoading(false);
-        }
-      }
-    } else {
-      setFiles([newFiles[0]]);
-      setPreviews([URL.createObjectURL(newFiles[0])]);
-      setAnalysis(null);
+    if (updatedFiles[0] && updatedFiles[1]) {
       setLoading(true);
       try {
-        setAnalysis(await analyzeImage(newFiles[0]));
+        setComparison(await compareImages(updatedFiles[0], updatedFiles[1]));
       } catch (e: unknown) {
         setError(e instanceof Error ? e.message : '解析中にエラーが発生しました');
       } finally {
@@ -49,21 +53,28 @@ export default function Home() {
     }
   };
 
-  const handleModeChange = (next: Mode) => {
-    setMode(next);
-    setPreviews([]);
-    setFiles([]);
+  const handleRemoveSlot = (index: number) => {
+    const updatedFiles: (File | null)[] = [...files];
+    const updatedPreviews: (string | null)[] = [...previews];
+    updatedFiles[index] = null;
+    updatedPreviews[index] = null;
+    setFiles(updatedFiles);
+    setPreviews(updatedPreviews);
+    setComparison(null);
+    if (index === 0) setAnalysis(null);
+  };
+
+  const handleReset = () => {
+    setFiles([null, null]);
+    setPreviews([null, null]);
     setAnalysis(null);
     setComparison(null);
     setError(null);
   };
 
-  const handleReset = () => {
-    setPreviews([]);
-    setFiles([]);
-    setAnalysis(null);
-    setComparison(null);
-    setError(null);
+  const handleModeChange = (next: Mode) => {
+    setMode(next);
+    handleReset();
   };
 
   return (
@@ -89,26 +100,48 @@ export default function Home() {
       </div>
 
       <div className="home__upload">
-        {previews.length > 0 && (
-          <div className="upload-actions">
-            <button className="delete-btn" onClick={handleReset}>削除</button>
+        {mode === 'single' && (
+          <div className={`upload-layout${files[0] ? ' upload-layout--split' : ' upload-layout--center'}`}>
+            <div className="upload-slot">
+              <UploadZone onFileSelect={handleSingleFile} mode="single" disabled={loading} />
+            </div>
+            {files[0] && previews[0] && (
+              <div className="upload-slot">
+                <div className="preview-box">
+                  <img src={previews[0]} alt="preview" className="preview-box__img" />
+                  <button className="preview-box__delete" onClick={handleReset}>削除</button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
-        <UploadZone onFileSelect={handleFiles} mode={mode} disabled={loading} />
-
-        {previews.length > 0 && (
-          <div className="preview">
-            {previews.map((url, i) => (
-              <img key={i} src={url} alt={`preview ${i + 1}`} className="preview__img" />
-            ))}
-          </div>
-        )}
-
-        {mode === 'compare' && files.length === 1 && !loading && (
-          <p className="upload-zone__sub" style={{ textAlign: 'center', marginTop: '0.5rem' }}>
-            2枚目の画像をアップロードしてください
-          </p>
+        {mode === 'compare' && (
+          <>
+            <div className="upload-layout upload-layout--split">
+              {([0, 1] as const).map((i) => (
+                <div key={i} className="upload-slot">
+                  {previews[i] ? (
+                    <div className="preview-box">
+                      <img src={previews[i]!} alt={`preview ${i + 1}`} className="preview-box__img" />
+                      <button className="preview-box__delete" onClick={() => handleRemoveSlot(i)}>削除</button>
+                    </div>
+                  ) : (
+                    <UploadZone
+                      onFileSelect={(f) => handleCompareFile(i, f)}
+                      mode="single"
+                      disabled={loading}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+            {files[0] && !files[1] && !loading && (
+              <p className="upload-zone__sub" style={{ textAlign: 'center', marginTop: '0.75rem' }}>
+                2枚目の画像をアップロードしてください
+              </p>
+            )}
+          </>
         )}
       </div>
 
