@@ -93,7 +93,7 @@ export default function Terms() {
         <section>
           <h2>10. お問い合わせ</h2>
           <p>
-            本規約に関するお問い合わせは、<a href="mailto:YOUR_EMAIL@example.com">お問い合わせはこちら</a>よりご連絡ください。
+            本規約に関するお問い合わせは、<a href="mailto:support@karineffort.com">お問い合わせはこちら</a>よりご連絡ください。
           </p>
         </section>
       </div>

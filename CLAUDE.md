@@ -12,7 +12,7 @@
 ### フロントエンド
 - `src/App.tsx` — React Router導入。/ルートのみ。認証関連ルートはUI非公開（コードは保持）
 - `src/App.css` — グローバルスタイル（ヘッダー・ホーム・アップロードゾーンなど）
-- `src/components/Header.tsx` — ロゴ（FakeScan・lang="en"）はホームへのリンクのみ。ナビゲーションリンクなし
+- `src/components/Header.tsx` — ロゴ（FakeScan・lang="en"）はホームへのリンクのみ。ナビゲーションリンクなし。ロゴ左にピンク（#f472b6）の虫眼鏡SVGアイコン
 - `src/components/Footer.tsx` — フッター。ロゴとコピーライトにlang="en"設定。プライバシーポリシー・利用規約リンクのみ（お問い合わせリンクは削除）
 - `src/components/UploadZone.tsx` — ドラッグ＆ドロップ対応アップロードUI（日本語テキスト）
 - `src/components/AnalysisCard.tsx` — 解析項目カード（スコアバー・詳細展開・画像表示）

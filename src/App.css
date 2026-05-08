@@ -51,6 +51,9 @@ body {
 }
 
 .header-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
   font-size: 1.25rem;
   color: #f8fafc;
   text-decoration: none;
