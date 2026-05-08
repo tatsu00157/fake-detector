@@ -50,7 +50,9 @@ def analyze(image_bytes: bytes) -> dict:
         p95 = float(np.percentile(flat, 95))
         median = float(np.median(flat))
         # 「一部だけ突出」(切り貼り)と「全体的に高い」(AI/自然な差)を区別する
-        score = min((p95 - median) * 2.0, 1.0)
+        # anomaly_ratioをベースにしつつ、集中度(p95-median)で補正
+        concentration = min((p95 - median) / 0.6, 1.0)
+        score = min(anomaly_ratio * 1.5 * (0.5 + concentration * 0.5), 1.0)
 
         # オーバーレイ画像生成（赤でハイライト）
         original = np.array(img)
