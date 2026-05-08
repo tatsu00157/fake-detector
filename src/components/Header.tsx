@@ -12,6 +12,9 @@ export default function Header() {
           </svg>
           <span className="logo-fake">Fake</span><span className="logo-scan">Scan</span>
         </Link>
+        <nav className="header-nav">
+          <Link to="/" className="header-home-link">ホーム</Link>
+        </nav>
       </div>
     </header>
   );

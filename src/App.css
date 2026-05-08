@@ -65,6 +65,17 @@ body {
   gap: 1rem;
 }
 
+.header-home-link {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.header-home-link:hover {
+  color: #f8fafc;
+}
+
 .header-email {
   font-size: 0.85rem;
   color: #64748b;
