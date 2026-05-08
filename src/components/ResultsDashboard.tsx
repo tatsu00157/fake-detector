@@ -118,10 +118,9 @@ export default function ResultsDashboard({ analysis, comparison }: Props) {
             score={analysis.ai_score}
             label={analysis.ai_label}
             tabs={[
-              { key: 'exif',        label: 'メタデータ',   result: analysis.exif },
-              { key: 'texture',     label: 'テクスチャ',   result: analysis.texture },
-              { key: 'noise',       label: 'ノイズレベル', result: analysis.noise },
-              { key: 'ai_features', label: '色収差解析',   result: analysis.ai_features },
+              { key: 'exif',    label: 'メタデータ',   result: analysis.exif },
+              { key: 'texture', label: 'テクスチャ',   result: analysis.texture },
+              { key: 'noise',   label: 'ノイズレベル', result: analysis.noise },
             ]}
           />
           <TabSection

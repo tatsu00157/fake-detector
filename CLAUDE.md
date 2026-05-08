@@ -41,7 +41,7 @@
 - `backend/services/fft_service.py` — 周波数解析（FFT）
 - `backend/services/pixel_stats_service.py` — ピクセル統計解析
 - `backend/services/face_service.py` — 顔検出
-- `backend/services/ai_features_service.py` — 色収差（Chromatic Aberration）解析。カメラレンズ由来のRGB色ズレの欠如を検出。色収差が少ない境界を赤でハイライト。AI判定スコアに使用
+- `backend/services/ai_features_service.py` — 色収差解析（未使用）。精度が出ず採用見送り
 - `backend/services/texture_service.py` — 局所テクスチャ分散マップ。不自然に滑らかな領域を赤でハイライト（AI生成画像に特有）
 - `backend/services/noise_service.py` — ノイズレベル解析。ノイズが少なすぎる領域を赤でハイライト（AI生成画像に特有）
 - `backend/services/noise_consistency_service.py` — ノイズ整合性解析。不整合ブロックのみ赤でハイライト
@@ -52,7 +52,7 @@
 - `backend/services/similarity_service.py` — SSIM＋パーセプチュアルハッシュで類似度をパーセント表示
 - `backend/requirements.txt` — 全依存パッケージ
 - `supabase/schema.sql` — usage_logs・subscriptionsテーブル定義（Supabase SQLエディタで実行）
-- AI判定スコア：4指標（Exif・テクスチャ・ノイズレベル・色収差解析）の平均
+- AI判定スコア：3指標（Exif・テクスチャ・ノイズレベル）の平均
 - 加工判定スコア：4指標（ノイズ整合性・DCT・PRNU・ノイズCoV）の平均。ELAはスコア計算対象外・参考表示のみ
 
 ## プロジェクト概要
