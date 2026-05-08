@@ -1,11 +1,8 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from services import (
-    exif_service, ela_service, fft_service,
-    pixel_stats_service, manipulation_service,
-    face_service, ai_features_service, prnu_service,
-    texture_service, noise_service,
+    exif_service, ela_service, manipulation_service,
+    prnu_service, texture_service, noise_service,
     noise_consistency_service, dct_splicing_service,
-    c2pa_service,
 )
 
 router = APIRouter(tags=["analysis"])
@@ -38,17 +35,12 @@ async def analyze_image(file: UploadFile = File(...)):
     results = {
         "exif":               exif_service.analyze(image_bytes),
         "ela":                ela_service.analyze(image_bytes),
-        "fft":                fft_service.analyze(image_bytes),
-        "pixel_stats":        pixel_stats_service.analyze(image_bytes),
         "manipulation":       manipulation_service.analyze(image_bytes),
-        "face_detection":     face_service.analyze(image_bytes),
-        "ai_features":        ai_features_service.analyze(image_bytes),
         "texture":            texture_service.analyze(image_bytes),
         "noise":              noise_service.analyze(image_bytes),
         "noise_consistency":  noise_consistency_service.analyze(image_bytes),
         "dct_splicing":       dct_splicing_service.analyze(image_bytes),
         "prnu":               prnu_service.analyze(image_bytes),
-        "c2pa":               c2pa_service.analyze(image_bytes),
     }
 
     ai_score,           ai_label           = _score_label(results, AI_KEYS)
