@@ -1,43 +1,9 @@
 import io
+import base64
 import cv2
 import numpy as np
 from PIL import Image
 from .base import get_label, error_result
-
-
-def _edge_sharpness(gray: np.ndarray) -> tuple:
-    """エッジと非エッジ領域の勾配比を計算。AIアニメはエッジが鋭くフラット面との差が大きい。"""
-    edges = cv2.Canny(gray, 50, 150)
-    edge_density = float(np.sum(edges > 0)) / edges.size
-
-    sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)
-    sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3)
-    sobel_mag = np.sqrt(sobelx ** 2 + sobely ** 2)
-
-    edge_mask = edges > 0
-    non_edge_mask = ~edge_mask
-
-    if np.sum(edge_mask) > 100 and np.sum(non_edge_mask) > 100:
-        edge_mean     = float(np.mean(sobel_mag[edge_mask]))
-        non_edge_mean = float(np.mean(sobel_mag[non_edge_mask]))
-        ratio = edge_mean / (non_edge_mean + 1e-8)
-    else:
-        ratio = 1.0
-
-    return edge_density, ratio
-
-
-def _color_variety(img_pil: Image.Image) -> float:
-    """色の多様性。AIアニメはフラット塗りで色数が少ない。"""
-    small = img_pil.resize((128, 128), Image.LANCZOS)
-    # JPEGでブラーをかけて圧縮ノイズによる偽色を除去
-    buf = io.BytesIO()
-    small.save(buf, format="JPEG", quality=85)
-    buf.seek(0)
-    small_j = Image.open(buf).convert("RGB")
-    quantized = small_j.quantize(colors=64)
-    color_count = len(set(quantized.getdata()))
-    return color_count / 64.0
 
 
 def analyze(image_bytes: bytes) -> dict:
@@ -49,27 +15,72 @@ def analyze(image_bytes: bytes) -> dict:
         if img_cv is None:
             return error_result("画像デコードに失敗しました")
 
-        gray = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
-        edge_density, sharpness_ratio = _edge_sharpness(gray)
-        color_variety = _color_variety(img_pil)
+        h, w = img_cv.shape[:2]
+        if max(h, w) > 1024:
+            scale = 1024 / max(h, w)
+            img_cv = cv2.resize(img_cv, (int(w * scale), int(h * scale)))
+            img_pil = img_pil.resize((int(w * scale), int(h * scale)), Image.LANCZOS)
 
-        # AIアニメ: エッジと非エッジの差が大きい・色数が少ない
-        edge_suspicious  = sharpness_ratio > 3.0
-        color_suspicious = color_variety < 0.65
+        b_ch, g_ch, r_ch = [img_cv[:, :, i].astype(np.float32) for i in range(3)]
 
-        signal_count = (1 if edge_suspicious else 0) + (1 if color_suspicious else 0)
-        score = min(signal_count / 2.0 * 0.85, 0.85)
+        def gradient_mag(ch):
+            gx = cv2.Sobel(ch, cv2.CV_32F, 1, 0, ksize=3)
+            gy = cv2.Sobel(ch, cv2.CV_32F, 0, 1, ksize=3)
+            return np.sqrt(gx ** 2 + gy ** 2)
+
+        mag_r = gradient_mag(r_ch)
+        mag_g = gradient_mag(g_ch)
+        mag_b = gradient_mag(b_ch)
+        mag_combined = (mag_r + mag_g + mag_b) / 3
+
+        # 上位20%の強エッジのみ対象
+        threshold = np.percentile(mag_combined, 80)
+        strong_edges = mag_combined > threshold
+
+        if np.sum(strong_edges) < 200:
+            return {
+                "score": 0.0,
+                "label": "clean",
+                "details": {"note": "エッジが少なく解析できませんでした"},
+                "image": None,
+            }
+
+        # RとBチャンネルの勾配差（色収差の指標）
+        # 本物のカメラ: レンズの物理特性でR-Bにズレが生じる
+        # AI画像: 物理レンズがないためズレがほぼゼロ
+        rb_diff = np.abs(mag_r - mag_b)
+        mean_ca = float(np.mean(rb_diff[strong_edges]))
+        mean_edge = float(np.mean(mag_combined[strong_edges]))
+        ca_ratio = mean_ca / (mean_edge + 1e-8)
+
+        # ca_ratio低い = 色収差なし = AI疑い
+        # 0.15以上: 本物らしい / 0.05未満: AIの可能性高い
+        ai_score = float(np.clip(1.0 - (ca_ratio / 0.15), 0.0, 1.0))
+
+        # 色収差が少ない強エッジ（下位25%）を赤でハイライト
+        low_ca_threshold = float(np.percentile(rb_diff[strong_edges], 25))
+        suspicious_mask = strong_edges & (rb_diff < low_ca_threshold)
+
+        overlay = np.zeros((*img_cv.shape[:2], 4), dtype=np.uint8)
+        overlay[suspicious_mask] = [255, 0, 0, 150]
+        combined = Image.alpha_composite(
+            img_pil.convert("RGBA"),
+            Image.fromarray(overlay, "RGBA")
+        )
+
+        out = io.BytesIO()
+        combined.convert("RGB").save(out, format="PNG")
+        img_b64 = base64.b64encode(out.getvalue()).decode()
 
         return {
-            "score": float(score),
-            "label": get_label(score),
+            "score": float(ai_score),
+            "label": get_label(ai_score),
             "details": {
-                "エッジ鋭さ比率": round(sharpness_ratio, 3),
-                "エッジ密度": round(edge_density, 4),
-                "色の多様度": round(color_variety, 3),
-                "解説": "エッジが鋭く色数が少ない場合はAI生成（特にアニメ調）の可能性があります",
+                "色収差比率": round(ca_ratio, 4),
+                "AI疑いスコア": round(ai_score, 3),
+                "解説": "カメラレンズ由来の色収差（RGB色ズレ）が少ない境界を赤でハイライト。AI生成画像では色収差がほぼ存在しません。",
             },
-            "image": None,
+            "image": f"data:image/png;base64,{img_b64}",
         }
     except Exception as e:
         return error_result(str(e))
