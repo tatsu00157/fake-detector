@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
@@ -13,6 +14,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <div className="app">
+          <ScrollToTop />
           <Header />
           <Routes>
             <Route path="/" element={<Home />} />
