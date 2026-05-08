@@ -10,9 +10,9 @@
 ## 実装済み
 
 ### フロントエンド
-- `src/App.tsx` — React Router導入。全ページ公開（認証はアップロード時にチェック）。/・/login・/signup・/dashboardルート
-- `src/App.css` — グローバルスタイル（ヘッダー・ホーム・アップロードゾーン・ダッシュボードなど）
-- `src/components/Header.tsx` — ロゴ（FakeScan・lang="en"）はホームへのリンク。未ログイン時は「ログイン」「新規登録」。ログイン中は「ダッシュボード」「ログアウト」
+- `src/App.tsx` — React Router導入。/ルートのみ。認証関連ルートはUI非公開（コードは保持）
+- `src/App.css` — グローバルスタイル（ヘッダー・ホーム・アップロードゾーンなど）
+- `src/components/Header.tsx` — ロゴ（FakeScan・lang="en"）はホームへのリンクのみ。ナビゲーションリンクなし
 - `src/components/Footer.tsx` — フッター。ロゴとコピーライトにlang="en"設定
 - `src/components/UploadZone.tsx` — ドラッグ＆ドロップ対応アップロードUI（日本語テキスト）
 - `src/components/AnalysisCard.tsx` — 解析項目カード（スコアバー・詳細展開・画像表示）
