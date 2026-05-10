@@ -2,6 +2,18 @@ import React from 'react';
 
 const CONTACT_EMAIL = 'contact@karineffort.com';
 
+const MAIL_SUBJECT = '【FakeScan】お問い合わせ';
+const MAIL_BODY = `【お問い合わせ種別】
+（機能の要望・バグ報告・解析結果の質問・その他）
+
+【お問い合わせ内容】
+
+
+【ご使用の環境（任意）】
+OS：
+ブラウザ：
+`;
+
 const categories = [
   {
     title: '機能の要望・提案',
@@ -46,11 +58,12 @@ export default function Contact() {
           <p>内容を確認のうえ、できる限り早めにご返信いたします。</p>
           <p>なお、お問い合わせの内容によってはご返信できない場合がございます。</p>
           <a
-            href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('【FakeScan】お問い合わせ')}`}
+            href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(MAIL_SUBJECT)}&body=${encodeURIComponent(MAIL_BODY)}`}
             className="contact-btn"
           >
             メールで問い合わせる
           </a>
+          <p className="contact-note">※メーラーが開いたら、件名（Subject）はそのままにしてお送りください。</p>
         </section>
 
         <section>

@@ -1545,6 +1545,12 @@ body {
   text-decoration: none;
 }
 
+.contact-note {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 600px) {
   .home__title { font-size: 1.8rem; }
