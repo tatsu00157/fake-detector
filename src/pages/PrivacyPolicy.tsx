@@ -82,7 +82,7 @@ export default function PrivacyPolicy() {
         <section>
           <h2>9. お問い合わせ</h2>
           <p>
-            本ポリシーに関するお問い合わせは、<a href="mailto:support@karineffort.com">お問い合わせはこちら</a>よりご連絡ください。
+            本ポリシーに関するお問い合わせは、<a href="/contact">お問い合わせページ</a>よりご連絡ください。
           </p>
         </section>
       </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CONTACT_EMAIL = 'support@karineffort.com';
+const CONTACT_EMAIL = 'contact@karineffort.com';
 
 const categories = [
   {
@@ -43,16 +43,18 @@ export default function Contact() {
         <section>
           <h2>お問い合わせ方法</h2>
           <p>下記のボタンからメールにてお気軽にご連絡ください。</p>
-          <p>通常2〜3営業日以内にご返信いたします。</p>
-          <a href={`mailto:${CONTACT_EMAIL}`} className="contact-btn">
+          <p>内容を確認のうえ、できる限り早めにご返信いたします。</p>
+          <a
+            href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('【FakeScan】お問い合わせ')}`}
+            className="contact-btn"
+          >
             メールで問い合わせる
           </a>
         </section>
 
         <section>
           <h2>運営者情報</h2>
-          <p>運営：【屋号】</p>
-          <p>メールアドレス：{CONTACT_EMAIL}</p>
+          <p>運営：Karin Lab</p>
         </section>
       </div>
     </main>
