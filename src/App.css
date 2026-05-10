@@ -1497,6 +1497,54 @@ body {
   text-decoration: underline;
 }
 
+/* ===== Contact Page ===== */
+.contact-categories {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin: 1.25rem 0 0.5rem;
+}
+
+.contact-category {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+}
+
+.contact-category h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+.contact-category p {
+  font-size: 0.875rem;
+  color: #475569;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+.contact-btn {
+  display: inline-block;
+  margin-top: 1.25rem;
+  padding: 0.75rem 2rem;
+  background: #f472b6;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.contact-btn:hover {
+  background: #ec4899;
+  color: #fff;
+  text-decoration: none;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 600px) {
   .home__title { font-size: 1.8rem; }

@@ -15,6 +15,7 @@ export default function Footer() {
         <nav className="footer-nav">
           <Link to="/privacy">プライバシーポリシー</Link>
           <Link to="/terms">利用規約</Link>
+          <Link to="/contact">お問い合わせ</Link>
         </nav>
         <p className="footer-copy" lang="en">© 2025 FakeScan. All rights reserved.</p>
       </div>

@@ -10,11 +10,11 @@
 ## 実装済み
 
 ### フロントエンド
-- `src/App.tsx` — React Router導入。/・/privacy・/termsルート。認証関連ルートはUI非公開（コードは保持）
+- `src/App.tsx` — React Router導入。/・/privacy・/terms・/contactルート。認証関連ルートはUI非公開（コードは保持）
 - `src/App.css` — グローバルスタイル（ヘッダー・ホーム・アップロードゾーンなど）
 - `src/components/ScrollToTop.tsx` — ルート変更時に自動でページ最上部にスムーズスクロール
 - `src/components/Header.tsx` — ロゴ（FakeScan・lang="en"）はホームへのリンク。ロゴ左にピンク（#f472b6）の虫眼鏡SVGアイコン。右側にホームリンク。ロゴ・ホームリンクはクリック時にスムーズスクロールで最上部へ
-- `src/components/Footer.tsx` — フッター。ロゴとコピーライトにlang="en"設定。プライバシーポリシー・利用規約リンクのみ。ロゴ左にヘッダーと同じピンクの虫眼鏡SVGアイコン
+- `src/components/Footer.tsx` — フッター。ロゴとコピーライトにlang="en"設定。プライバシーポリシー・利用規約・お問い合わせリンク。ロゴ左にヘッダーと同じピンクの虫眼鏡SVGアイコン
 - `src/components/UploadZone.tsx` — ドラッグ＆ドロップ対応アップロードUI（日本語テキスト）
 - `src/components/AnalysisCard.tsx` — 解析項目カード（スコアバー・詳細展開・画像表示）
 - `src/components/ResultsDashboard.tsx` — AI生成検出・加工検出をタブUI（メタデータ・テクスチャ・ノイズ等）で切り替え表示。セクションごとの総合スコアバッジ。タブに判定カラードット表示。結果上部に参考情報である旨の免責注意書き表示
@@ -25,7 +25,8 @@
 - `src/api/client.ts` — 認証なし・シンプルなfetch。analyzeImage・compareImagesのみ。429エラーは日本語メッセージで表示
 - `src/pages/Home.tsx` — ホームページ。利用制限なし・無制限。アップロード後は左にアップロードゾーン・右にプレビューを横並び表示。「解析する」「比較する」ボタンを押して解析開始。解析中はプレビュー上に走査線アニメーションとドットインジケーター表示。スマホは縦並びにフォールバック
 - `src/pages/PrivacyPolicy.tsx` — プライバシーポリシーページ（/privacy）
-- `src/pages/Terms.tsx` — 利用規約ページ（/terms）
+- `src/pages/Terms.tsx` — 利用規約ページ（/terms）。10条のお問い合わせリンクは /contact へ
+- `src/pages/Contact.tsx` — お問い合わせページ（/contact）。お問い合わせ種類カード4種・メールリンク・運営者情報（屋号プレースホルダー）
 - `src/pages/Login.tsx` — ログインページ。下部に新規登録へのリンク
 - `src/pages/Signup.tsx` — 新規登録ページ。パスワード表示切替・要件リアルタイム表示（8文字以上・英字・数字・記号）・パスワード確認欄
 - `src/pages/Dashboard.tsx` — ダッシュボードページ。ログイン中のメールアドレスを表示
