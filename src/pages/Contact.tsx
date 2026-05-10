@@ -44,6 +44,7 @@ export default function Contact() {
           <h2>お問い合わせ方法</h2>
           <p>下記のボタンからメールにてお気軽にご連絡ください。</p>
           <p>内容を確認のうえ、できる限り早めにご返信いたします。</p>
+          <p>なお、お問い合わせの内容によってはご返信できない場合がございます。</p>
           <a
             href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('【FakeScan】お問い合わせ')}`}
             className="contact-btn"
