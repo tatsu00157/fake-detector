@@ -35,9 +35,9 @@
 - ブランドカラー：ピンク（`#f472b6`）を登録系CTAボタンに使用
 
 ### バックエンド
-- `backend/main.py` — FastAPIアプリ本体。slowapiのlimiterをapp.state登録・429ハンドラー追加
+- `backend/main.py` — FastAPIアプリ本体。slowapiのlimiterをapp.state登録・429ハンドラー追加。SecurityHeadersMiddleware（X-Content-Type-Options等）。本番環境ではSwagger UI・ReDoc・openapi.jsonを無効化
 - `backend/core/limiter.py` — slowapi Limiterインスタンス（IPアドレスベース）
-- `backend/core/config.py` — 環境変数設定（Supabase・Stripe）
+- `backend/core/config.py` — 環境変数設定（Supabase・Stripe・app_env）。app_envのデフォルトはproduction。developmentにするとSwagger UIが有効になる
 - `backend/dependencies/auth.py` — 未使用（コードは保持）
 - `backend/routers/analysis.py` — `/api/v1/analyze` エンドポイント。認証不要・全解析（PRNU含む）を全ユーザーに実行。レート制限：10回/分/IP
 - `backend/routers/compare.py` — `/api/v1/compare` エンドポイント。認証不要。レート制限：5回/分/IP
