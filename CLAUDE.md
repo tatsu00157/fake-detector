@@ -22,7 +22,7 @@
 - `src/types/analysis.ts` — 解析結果の型定義。noise_consistency・dct_splicing・prnu?
 - `src/lib/supabase.ts` — Supabaseクライアント
 - `src/context/AuthContext.tsx` — 認証状態管理（ログイン・ログアウト・セッション）
-- `src/api/client.ts` — 認証なし・シンプルなfetch。analyzeImage・compareImagesのみ
+- `src/api/client.ts` — 認証なし・シンプルなfetch。analyzeImage・compareImagesのみ。429エラーは日本語メッセージで表示
 - `src/pages/Home.tsx` — ホームページ。利用制限なし・無制限。アップロード後は左にアップロードゾーン・右にプレビューを横並び表示。「解析する」「比較する」ボタンを押して解析開始。解析中はプレビュー上に走査線アニメーションとドットインジケーター表示。スマホは縦並びにフォールバック
 - `src/pages/PrivacyPolicy.tsx` — プライバシーポリシーページ（/privacy）
 - `src/pages/Terms.tsx` — 利用規約ページ（/terms）
@@ -34,11 +34,12 @@
 - ブランドカラー：ピンク（`#f472b6`）を登録系CTAボタンに使用
 
 ### バックエンド
-- `backend/main.py` — FastAPIアプリ本体
+- `backend/main.py` — FastAPIアプリ本体。slowapiのlimiterをapp.state登録・429ハンドラー追加
+- `backend/core/limiter.py` — slowapi Limiterインスタンス（IPアドレスベース）
 - `backend/core/config.py` — 環境変数設定（Supabase・Stripe）
 - `backend/dependencies/auth.py` — 未使用（コードは保持）
-- `backend/routers/analysis.py` — `/api/v1/analyze` エンドポイント。認証不要・全解析（PRNU含む）を全ユーザーに実行
-- `backend/routers/compare.py` — `/api/v1/compare` エンドポイント。認証不要
+- `backend/routers/analysis.py` — `/api/v1/analyze` エンドポイント。認証不要・全解析（PRNU含む）を全ユーザーに実行。レート制限：10回/分/IP
+- `backend/routers/compare.py` — `/api/v1/compare` エンドポイント。認証不要。レート制限：5回/分/IP
 - `backend/routers/stripe_router.py` — 未使用（コードは保持）
 - `backend/services/exif_service.py` — Exifメタデータ解析・AIツール署名チェック。値が存在するフィールドのみ日本語ラベルで表示。メタデータなし→スコア0.6（カメラ情報の完全欠如はAI疑い）
 - `backend/services/ela_service.py` — ELA解析（局所ホットスポット検出含む）
@@ -50,7 +51,7 @@
 - `backend/services/manipulation_service.py` — ノイズCoV検出。外れ値ブロックを赤でハイライト。外れ値閾値3σ・CoV重み0.3・外れ値重み0.7（AI画像の誤検出を減らすよう調整済み）。詳細は判定テキスト＋解説のみ表示（生数値は非表示）
 - `backend/services/diff_service.py` — 2枚の画像の差分を赤でハイライト
 - `backend/services/similarity_service.py` — SSIM＋パーセプチュアルハッシュで類似度をパーセント表示
-- `backend/requirements.txt` — 全依存パッケージ
+- `backend/requirements.txt` — 全依存パッケージ（slowapi==0.1.9追加済み）
 - `supabase/schema.sql` — usage_logs・subscriptionsテーブル定義（Supabase SQLエディタで実行）
 - AI判定スコア：3指標（Exif・テクスチャ・ノイズレベル）の平均
 - 加工判定スコア：4指標（ノイズ整合性・DCT・PRNU・ノイズCoV）の平均。ELAはスコア計算対象外・参考表示のみ

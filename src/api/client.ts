@@ -2,6 +2,9 @@ const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8000/api/v1'
 
 async function handleResponse(res: Response) {
   if (!res.ok) {
+    if (res.status === 429) {
+      throw new Error('リクエストが多すぎます。少し待ってから再試行してください。');
+    }
     const err = await res.json().catch(() => ({ detail: res.statusText }));
     throw new Error(err.detail || '解析に失敗しました');
   }

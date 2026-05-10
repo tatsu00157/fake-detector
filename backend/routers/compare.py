@@ -1,4 +1,5 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Request
+from core.limiter import limiter
 from services import diff_service, similarity_service
 
 router = APIRouter(tags=["compare"])
@@ -13,7 +14,8 @@ def _validate(file: UploadFile):
 
 
 @router.post("/compare")
-async def compare_images(file1: UploadFile = File(...), file2: UploadFile = File(...)):
+@limiter.limit("5/minute")
+async def compare_images(request: Request, file1: UploadFile = File(...), file2: UploadFile = File(...)):
     _validate(file1)
     _validate(file2)
 

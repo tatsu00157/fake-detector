@@ -1,4 +1,5 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Request
+from core.limiter import limiter
 from services import (
     exif_service, ela_service, manipulation_service,
     prnu_service, texture_service, noise_service,
@@ -26,7 +27,8 @@ def _score_label(results: dict, keys: list) -> tuple:
 
 
 @router.post("/analyze")
-async def analyze_image(file: UploadFile = File(...)):
+@limiter.limit("10/minute")
+async def analyze_image(request: Request, file: UploadFile = File(...)):
     _validate(file)
     image_bytes = await file.read()
     if len(image_bytes) > MAX_BYTES:
