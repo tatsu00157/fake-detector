@@ -3,15 +3,10 @@ import React from 'react';
 const CONTACT_EMAIL = 'contact@karineffort.com';
 
 const MAIL_SUBJECT = '【FakeScan】お問い合わせ';
-const MAIL_BODY = `【お問い合わせ種別】
-（機能の要望・バグ報告・解析結果の質問・その他）
+const MAIL_BODY = `※件名は変更せずにお送りください。
 
 【お問い合わせ内容】
-
-
-【ご使用の環境（任意）】
-OS：
-ブラウザ：
+（こちらにご記入ください）
 `;
 
 const categories = [
@@ -63,7 +58,6 @@ export default function Contact() {
           >
             メールで問い合わせる
           </a>
-          <p className="contact-note">※メーラーが開いたら、件名（Subject）はそのままにしてお送りください。</p>
         </section>
 
         <section>
