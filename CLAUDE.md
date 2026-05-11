@@ -17,9 +17,9 @@
 - `src/components/Footer.tsx` — フッター。ロゴとコピーライトにlang="en"設定。プライバシーポリシー・利用規約・お問い合わせリンク。ロゴ左にヘッダーと同じピンクの虫眼鏡SVGアイコン
 - `src/components/UploadZone.tsx` — ドラッグ＆ドロップ対応アップロードUI（日本語テキスト）
 - `src/components/AnalysisCard.tsx` — 解析項目カード（スコアバー・詳細展開・画像表示）
-- `src/components/ResultsDashboard.tsx` — AI生成検出・加工検出をタブUI（メタデータ・テクスチャ・ノイズ等）で切り替え表示。セクションごとの総合スコアバッジ。タブに判定カラードット表示。結果上部に参考情報である旨の免責注意書き表示
+- `src/components/ResultsDashboard.tsx` — AI生成検出・加工検出をタブUI（メタデータ・テクスチャ・ノイズ等）で切り替え表示。セクションごとの総合スコアバッジ。タブに判定カラードット表示。結果上部に参考情報である旨の免責注意書き表示。スコア表示は小数点第一位。比較結果セクションはタブ切り替えでヘッダーのラベル・スコアが連動（useTabScore）。LABEL_MAPにdiff（差異率）・similarity（類似度）を追加（青・#3b82f6）。差分・類似度タブはスコアバー非表示・詳細欄に数値表示
 - `src/components/ExplanationsSection.tsx` — 解析指標の説明・マップの見方・スコア基準。Home.tsxで常時表示
-- `src/types/analysis.ts` — 解析結果の型定義。noise_consistency・dct_splicing・prnu?
+- `src/types/analysis.ts` — 解析結果の型定義。noise_consistency・dct_splicing・prnu?。labelに'diff'|'similarity'を追加
 - `src/lib/supabase.ts` — Supabaseクライアント
 - `src/context/AuthContext.tsx` — 認証状態管理（ログイン・ログアウト・セッション）
 - `src/api/client.ts` — 認証なし・シンプルなfetch。analyzeImage・compareImagesのみ。429エラーは日本語メッセージで表示
@@ -51,8 +51,8 @@
 - `backend/services/dct_splicing_service.py` — DCTスプライシング検出。異常ブロックのみ赤でハイライト。z閾値2.5・係数2.0（AI画像の誤検出を減らすよう調整済み）。詳細は判定テキスト＋見方のみ表示（割合数値は非表示）
 - `backend/services/prnu_service.py` — ノイズ残差マップ（最高精度の加工検出）。全ユーザーに実行。スコア＝ヒートマップ平均値×3.0で視覚（赤の量）とスコアが一致。詳細は判定テキスト＋見方のみ表示（割合数値は非表示）
 - `backend/services/manipulation_service.py` — ノイズCoV検出。外れ値ブロックを赤でハイライト。外れ値閾値3σ・CoV重み0.3・外れ値重み0.7（AI画像の誤検出を減らすよう調整済み）。詳細は判定テキスト＋解説のみ表示（生数値は非表示）
-- `backend/services/diff_service.py` — 2枚の画像の差分を赤でハイライト
-- `backend/services/similarity_service.py` — SSIM＋パーセプチュアルハッシュで類似度をパーセント表示
+- `backend/services/diff_service.py` — 2枚の画像の差分を赤でハイライト。label="diff"。詳細に差異率（%）と判定テキストを表示
+- `backend/services/similarity_service.py` — SSIM＋パーセプチュアルハッシュで類似度をパーセント表示。label="similarity"。score=similarity/100で実際の類似度を反映
 - `backend/requirements.txt` — 全依存パッケージ（slowapi==0.1.9追加済み）
 - `supabase/schema.sql` — usage_logs・subscriptionsテーブル定義（Supabase SQLエディタで実行）
 - AI判定スコア：3指標（Exif・テクスチャ・ノイズレベル）の平均
