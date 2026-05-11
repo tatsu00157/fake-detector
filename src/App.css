@@ -1539,6 +1539,11 @@ body {
   transition: background 0.15s;
 }
 
+.contact-btn:link,
+.contact-btn:visited {
+  color: #fff;
+}
+
 .contact-btn:hover {
   background: #ec4899;
   color: #fff;
