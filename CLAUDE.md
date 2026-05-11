@@ -119,6 +119,26 @@ AIが生成したフェイク画像・動画、および人為的に加工され
 - 一括処理
 - 収益化再検討（有料プラン復活）
 
+## デプロイ環境
+
+- **本番URL**: https://fakescan.karineffort.com
+- **VPS OS**: Rocky Linux / Webサーバー: Apache
+- **デプロイ先**: `/var/www/fakescan/`
+- **フロントエンド静的ファイル**: `/var/www/fakescan/build/`
+- **バックエンド**: `/var/www/fakescan/backend/`
+- **systemdサービス名**: `fakescan.service`（gunicorn + uvicorn worker、ポート127.0.0.1:8000）
+- **Apacheリバースプロキシ**: `/api/*` → gunicorn、静的ファイルはDocumentRootから配信
+- **SSL**: Let's Encrypt（certbot）
+- **フロントエンドビルド時の必須環境変数**（`/var/www/fakescan/.env.production`）:
+  - `REACT_APP_API_URL=https://fakescan.karineffort.com/api/v1`
+  - `REACT_APP_SUPABASE_URL`
+  - `REACT_APP_SUPABASE_ANON_KEY`
+- **バックエンド環境変数**（`/var/www/fakescan/backend/.env`）: `APP_ENV` / `ALLOWED_ORIGINS` / `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY`
+- **更新デプロイ手順**:
+  1. `git pull`
+  2. フロントエンド変更時: `npm run build`
+  3. バックエンド変更時: `sudo systemctl restart fakescan`
+
 ## ライセンス
 
 MIT License
