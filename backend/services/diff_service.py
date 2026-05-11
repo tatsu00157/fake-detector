@@ -46,7 +46,7 @@ def analyze(image_bytes1: bytes, image_bytes2: bytes) -> dict:
         return {
             "score": float(score),
             "label": "diff",
-            "details": {"判定": judgment},
+            "details": {"差異率": f"{round(score * 100, 1)}%", "判定": judgment},
             "image": f"data:image/png;base64,{img_b64}",
         }
     except Exception as e:
