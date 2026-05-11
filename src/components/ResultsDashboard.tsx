@@ -75,7 +75,7 @@ function TabSection({ title, score, label, tabs, useTabScore }: {
           <span className="result-content__label" style={{ background: tabCfg.color }}>
             {tabCfg.text}
           </span>
-          {current.result.label !== 'info' && current.result.label !== 'error' && current.result.score > 0 && (
+          {current.result.label !== 'info' && current.result.label !== 'error' && (
             <>
               <div className="result-content__bar">
                 <div
