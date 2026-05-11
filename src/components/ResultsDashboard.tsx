@@ -18,6 +18,8 @@ const LABEL_MAP: Record<string, { text: string; color: string }> = {
   suspicious: { text: '疑わしい', color: '#ef4444' },
   info:       { text: '情報',     color: '#3b82f6' },
   error:      { text: 'エラー',   color: '#94a3b8' },
+  diff:       { text: '差異率',   color: '#94a3b8' },
+  similarity: { text: '類似度',   color: '#94a3b8' },
 };
 
 function renderValue(val: unknown): string {
@@ -25,27 +27,30 @@ function renderValue(val: unknown): string {
   return String(val);
 }
 
-function TabSection({ title, score, label, tabs }: {
+function TabSection({ title, score, label, tabs, useTabScore }: {
   title: string;
   score: number;
   label: string;
   tabs: TabDef[];
+  useTabScore?: boolean;
 }) {
   const [active, setActive] = useState(0);
   const sectionCfg = LABEL_MAP[label] ?? LABEL_MAP.error;
   const current = tabs[active];
   const tabCfg = LABEL_MAP[current.result.label] ?? LABEL_MAP.error;
   const pct = Math.round(current.result.score * 100);
+  const headerCfg = useTabScore ? tabCfg : sectionCfg;
+  const headerScore = useTabScore ? current.result.score : score;
 
   return (
     <div className="result-section">
       <div className="result-section__header">
         <h2 className="result-section__title">{title}</h2>
         <div className="result-section__summary">
-          <span className="result-section__badge" style={{ background: sectionCfg.color }}>
-            {sectionCfg.text}
+          <span className="result-section__badge" style={{ background: headerCfg.color }}>
+            {headerCfg.text}
           </span>
-          <span className="result-section__score-num">{(score * 100).toFixed(1)}%</span>
+          <span className="result-section__score-num">{(headerScore * 100).toFixed(1)}%</span>
         </div>
       </div>
 
@@ -70,7 +75,7 @@ function TabSection({ title, score, label, tabs }: {
           <span className="result-content__label" style={{ background: tabCfg.color }}>
             {tabCfg.text}
           </span>
-          {current.result.label !== 'info' && current.result.label !== 'error' && (
+          {current.result.label !== 'info' && current.result.label !== 'error' && current.result.score > 0 && (
             <>
               <div className="result-content__bar">
                 <div
@@ -146,6 +151,7 @@ export default function ResultsDashboard({ analysis, comparison }: Props) {
           title="比較結果"
           score={comparison.similarity.score}
           label={comparison.similarity.label}
+          useTabScore={true}
           tabs={[
             { key: 'diff',       label: '差分検出',   result: comparison.diff },
             { key: 'similarity', label: '類似度比較', result: comparison.similarity },

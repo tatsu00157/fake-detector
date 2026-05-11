@@ -38,7 +38,7 @@ def analyze(image_bytes1: bytes, image_bytes2: bytes) -> dict:
 
         return {
             "score": similarity / 100.0,
-            "label": "info",
+            "label": "similarity",
             "details": {
                 "類似度": f"{similarity}%",
                 "判定": judgment,

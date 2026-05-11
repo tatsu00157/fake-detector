@@ -1,6 +1,6 @@
 export interface AnalysisResult {
   score: number;
-  label: 'clean' | 'warning' | 'suspicious' | 'info' | 'error';
+  label: 'clean' | 'warning' | 'suspicious' | 'info' | 'error' | 'diff' | 'similarity';
   details: Record<string, unknown>;
   image: string | null;
 }
