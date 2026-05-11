@@ -45,7 +45,7 @@ function TabSection({ title, score, label, tabs }: {
           <span className="result-section__badge" style={{ background: sectionCfg.color }}>
             {sectionCfg.text}
           </span>
-          <span className="result-section__score-num">{Math.round(score * 100)}%</span>
+          <span className="result-section__score-num">{(score * 100).toFixed(1)}%</span>
         </div>
       </div>
 
