@@ -18,8 +18,8 @@ const LABEL_MAP: Record<string, { text: string; color: string }> = {
   suspicious: { text: '疑わしい', color: '#ef4444' },
   info:       { text: '情報',     color: '#3b82f6' },
   error:      { text: 'エラー',   color: '#94a3b8' },
-  diff:       { text: '差異率',   color: '#94a3b8' },
-  similarity: { text: '類似度',   color: '#94a3b8' },
+  diff:       { text: '差異率',   color: '#3b82f6' },
+  similarity: { text: '類似度',   color: '#3b82f6' },
 };
 
 function renderValue(val: unknown): string {
