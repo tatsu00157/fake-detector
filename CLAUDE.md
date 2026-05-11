@@ -24,15 +24,17 @@
 - `src/context/AuthContext.tsx` — 認証状態管理（ログイン・ログアウト・セッション）
 - `src/api/client.ts` — 認証なし・シンプルなfetch。analyzeImage・compareImagesのみ。429エラーは日本語メッセージで表示
 - `src/pages/Home.tsx` — ホームページ。利用制限なし・無制限。アップロード後は左にアップロードゾーン・右にプレビューを横並び表示。「解析する」「比較する」ボタンを押して解析開始。解析中はプレビュー上に走査線アニメーションとドットインジケーター表示。スマホは縦並びにフォールバック
-- `src/pages/PrivacyPolicy.tsx` — プライバシーポリシーページ（/privacy）。9条のお問い合わせリンクは /contact へ
+- `src/pages/PrivacyPolicy.tsx` — プライバシーポリシーページ（/privacy）。10条のお問い合わせリンクは /contact へ。5条にGoogleアナリティクス（GA4）のCookie使用・オプトアウト方法を明記。7条にCookie説明（独自トラッキングなし・GA4は5条参照）
 - `src/pages/Terms.tsx` — 利用規約ページ（/terms）。10条のお問い合わせリンクは /contact へ
 - `src/pages/Contact.tsx` — お問い合わせページ（/contact）。お問い合わせ種類カード4種・メールリンク（件名【FakeScan】自動付与・本文テンプレートに件名変更しないよう注記）・「内容によってはご返信できない場合がある」免責文・運営者情報（屋号：Karin Lab）。連絡先はcontact@karineffort.com
 - `src/pages/Login.tsx` — ログインページ。下部に新規登録へのリンク
 - `src/pages/Signup.tsx` — 新規登録ページ。パスワード表示切替・要件リアルタイム表示（8文字以上・英字・数字・記号）・パスワード確認欄
 - `src/pages/Dashboard.tsx` — ダッシュボードページ。ログイン中のメールアドレスを表示
-- `public/index.html` — lang="ja"設定・タイトル・meta description・OGP・Twitter Card設定済み。og:url=https://fakescan.karineffort.com。noscriptは日本語
+- `public/index.html` — lang="ja"設定・タイトル・meta description・OGP・Twitter Card設定済み。og:url=https://fakescan.karineffort.com。noscriptは日本語。GoogleアナリティクスGA4（gtag.js）埋め込み済み
 - `public/manifest.json` — short_name=FakeScan・theme_color=#0f172a・background_color=#f8fafc設定済み
 - `public/favicon.svg` — ネイビー背景＋ピンク虫眼鏡のSVGファビコン
+- `public/sitemap.xml` — /・/privacy・/terms・/contactの4ページ記載
+- `public/robots.txt` — Sitemapディレクティブにsitemap.xmlのURLを指定
 - ブランドカラー：ピンク（`#f472b6`）を登録系CTAボタンに使用
 
 ### バックエンド

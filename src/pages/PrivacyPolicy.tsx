@@ -5,7 +5,7 @@ export default function PrivacyPolicy() {
     <main className="legal-page">
       <div className="legal-inner">
         <h1>プライバシーポリシー</h1>
-        <p className="legal-updated">最終更新日：2026年5月9日</p>
+        <p className="legal-updated">最終更新日：2026年5月11日</p>
 
         <section>
           <h2>1. はじめに</h2>
@@ -40,6 +40,7 @@ export default function PrivacyPolicy() {
             <li>アップロードされた画像の解析結果を提供するため</li>
             <li>サービスの品質改善・不具合対応のため</li>
             <li>不正利用の検知・防止のため</li>
+            <li>Googleアナリティクスによるサービスの利用状況分析のため</li>
           </ul>
         </section>
 
@@ -51,9 +52,15 @@ export default function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2>5. Cookieについて</h2>
+          <h2>5. Googleアナリティクスについて</h2>
           <p>
-            本サービスはトラッキング目的のCookieは使用しません。
+            本サービスはアクセス解析のためにGoogle LLC提供のGoogleアナリティクス（GA4）を使用しています。
+            GoogleアナリティクスはCookieを使用してアクセス情報（ページ閲覧数・滞在時間・使用デバイス等）を収集します。
+            収集されたデータはGoogleのプライバシーポリシーに基づいて管理されます。
+          </p>
+          <p>
+            Googleアナリティクスによるデータ収集を無効にするには、
+            <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">Googleアナリティクス オプトアウトアドオン</a>をご利用ください。
           </p>
         </section>
 
@@ -66,21 +73,28 @@ export default function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2>7. 未成年者について</h2>
+          <h2>7. Cookieについて</h2>
+          <p>
+            本サービスは独自のトラッキングCookieは使用しません。ただし、Googleアナリティクスが利用するCookieについては第5条をご参照ください。
+          </p>
+        </section>
+
+        <section>
+          <h2>8. 未成年者について</h2>
           <p>
             本サービスは13歳未満の方の利用を想定していません。
           </p>
         </section>
 
         <section>
-          <h2>8. プライバシーポリシーの変更</h2>
+          <h2>9. プライバシーポリシーの変更</h2>
           <p>
             本ポリシーは予告なく変更される場合があります。変更後はこのページに掲載し、最終更新日を更新します。
           </p>
         </section>
 
         <section>
-          <h2>9. お問い合わせ</h2>
+          <h2>10. お問い合わせ</h2>
           <p>
             本ポリシーに関するお問い合わせは、<a href="/contact">お問い合わせページ</a>よりご連絡ください。
           </p>
