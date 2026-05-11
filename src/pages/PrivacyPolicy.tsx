@@ -54,7 +54,7 @@ export default function PrivacyPolicy() {
         <section>
           <h2>5. Googleアナリティクスについて</h2>
           <p>
-            本サービスはアクセス解析のためにGoogle LLC提供のGoogleアナリティクス（GA4）を使用しています。
+            本サービスはサービスの向上・改善を目的として、Google LLC提供のGoogleアナリティクス（GA4）を使用しています。
             GoogleアナリティクスはCookieを使用してアクセス情報（ページ閲覧数・滞在時間・使用デバイス等）を収集します。
             収集されたデータはGoogleのプライバシーポリシーに基づいて管理されます。
           </p>
