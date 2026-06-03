@@ -143,6 +143,12 @@ AIが生成したフェイク画像・動画、および人為的に加工され
   2. フロントエンド変更時: `npm run build`
   3. バックエンド変更時: `sudo systemctl restart fakescan`
 
+## ローカルドキュメント（gitignore対象・追跡外）
+
+- `docs/zenn_article.md` — Zenn投稿用記事ドラフト（frontmatter付き・published: false）
+- `docs/document.md` — 技術ドキュメント（アーキテクチャ・APIリファレンス・セットアップ・デプロイ手順）
+- `.gitignore` に `/docs` を追加済み
+
 ## ライセンス
 
 MIT License
