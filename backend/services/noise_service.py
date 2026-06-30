@@ -38,9 +38,9 @@ def analyze(image_bytes: bytes) -> dict:
 
         noise_vars_arr = np.array(noise_vars)
         overall_score = float(np.mean(noise_map))
-        # ノイズ多様性が高い（不均一なノイズ分布）= 本物の写真らしい → スコアを下げる
+        # CV（変動係数）：高い＝不均一なノイズ（本物の写真）、低い＝均一に低ノイズ（AI画像）
         noise_diversity = float(np.std(noise_vars_arr)) / (float(np.mean(noise_vars_arr)) + 1e-8)
-        score = min(overall_score / (1.0 + noise_diversity * 0.5), 1.0)
+        score = min(overall_score / (1.0 + noise_diversity * 0.8), 1.0)
 
         out = io.BytesIO()
         Image.fromarray(overlay).save(out, format="PNG")

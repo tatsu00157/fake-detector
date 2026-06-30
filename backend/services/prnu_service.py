@@ -45,7 +45,7 @@ def analyze(image_bytes: bytes) -> dict:
         noise = _noise_residual(gray)
         heatmap = _inconsistency_map(noise)
 
-        score = min(float(np.mean(heatmap)) * 2.0, 1.0)
+        score = min(float(np.mean(heatmap)) * 2.5, 1.0)
 
         # オーバーレイ画像生成（赤でハイライト）
         original = np.array(img)
