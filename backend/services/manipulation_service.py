@@ -39,7 +39,7 @@ def analyze(image_bytes: bytes) -> dict:
         outlier_mask = np.abs(noises - mean_noise) > 3 * std_noise
         outlier_ratio = float(np.sum(outlier_mask) / len(noises))
 
-        score = min((cov / 2.0 * 0.3) + (outlier_ratio / 0.03 * 0.7), 1.0)
+        score = min((cov / 2.0 * 0.3) + (outlier_ratio / 0.1 * 0.7), 1.0)
 
         overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
         draw = ImageDraw.Draw(overlay)

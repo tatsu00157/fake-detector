@@ -36,7 +36,7 @@ def analyze(image_bytes: bytes) -> dict:
             return {"score": 0, "label": "clean", "image": None, "details": {"判定": "解析不能"}}
 
         z_scores = np.abs((log_e - mean_e) / std_e)
-        suspicious_ratio = float(np.mean(z_scores > 2.0))
+        suspicious_ratio = float(np.mean(z_scores > 2.5))
 
         mask_small = (z_scores > 2.5).astype(np.uint8) * 255
         mask = cv2.resize(mask_small, (w, h), interpolation=cv2.INTER_NEAREST)
@@ -47,7 +47,7 @@ def analyze(image_bytes: bytes) -> dict:
         _, buf = cv2.imencode(".jpg", overlay)
         img_b64 = f"data:image/jpeg;base64,{base64.b64encode(buf).decode()}"
 
-        score = min(suspicious_ratio * 3.0, 1.0)
+        score = min(suspicious_ratio * 2.0, 1.0)
         label = "suspicious" if score > 0.6 else "warning" if score > 0.3 else "clean"
 
         return {
