@@ -139,9 +139,9 @@ AIが生成したフェイク画像・動画、および人為的に加工され
   - `REACT_APP_SUPABASE_ANON_KEY`
 - **バックエンド環境変数**（`/var/www/fakescan/backend/.env`）: `APP_ENV` / `ALLOWED_ORIGINS` / `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY`
 - **更新デプロイ手順**:
-  1. `git pull`
-  2. フロントエンド変更時: `npm run build`
-  3. バックエンド変更時: `sudo systemctl restart fakescan`
+  - VPSのホームディレクトリ（`/root/`）直下に `shell/` ディレクトリがあり、自動デプロイ用シェルスクリプトを置いている
+  - VPSにSSH接続後、そのスクリプトを実行するだけでデプロイ完了
+  - **`cd /var/www/fakescan` してから手動で `git pull` するのは誤り。シェルスクリプト経由が正しい**
 
 ## ローカルドキュメント（gitignore対象・追跡外）
 
