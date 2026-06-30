@@ -21,12 +21,13 @@ def analyze(image_bytes: bytes) -> dict:
         h, w = gray.shape
         noise_map = np.zeros((h, w), dtype=np.float32)
 
+        noise_vars = []
         for y in range(0, h - block, block):
             for x in range(0, w - block, block):
                 patch = noise[y:y + block, x:x + block]
                 var = float(np.var(patch))
-                score = 1.0 - min(var / 5.0, 1.0)
-                noise_map[y:y + block, x:x + block] = score
+                noise_vars.append(var)
+                noise_map[y:y + block, x:x + block] = 1.0 - min(var / 5.0, 1.0)
 
         # 赤オーバーレイ（ノイズが少なすぎる箇所ほど赤く）
         original = arr.astype(np.uint8)
@@ -35,8 +36,11 @@ def analyze(image_bytes: bytes) -> dict:
         alpha = noise_map[:, :, np.newaxis] * 0.65
         overlay = np.clip(original * (1 - alpha) + red * alpha, 0, 255).astype(np.uint8)
 
+        noise_vars_arr = np.array(noise_vars)
         overall_score = float(np.mean(noise_map))
-        score = min(overall_score / 0.6, 1.0)
+        # ノイズ多様性が高い（不均一なノイズ分布）= 本物の写真らしい → スコアを下げる
+        noise_diversity = float(np.std(noise_vars_arr)) / (float(np.mean(noise_vars_arr)) + 1e-8)
+        score = min(overall_score / (1.0 + noise_diversity * 0.5), 1.0)
 
         out = io.BytesIO()
         Image.fromarray(overlay).save(out, format="PNG")

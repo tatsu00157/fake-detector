@@ -15,13 +15,13 @@ def analyze(image_bytes: bytes) -> dict:
         h, w = gray.shape
         smoothness = np.zeros((h, w), dtype=float)
 
+        block_vars = []
         for y in range(0, h - block, block):
             for x in range(0, w - block, block):
                 patch = gray[y:y + block, x:x + block]
                 var = float(np.var(patch))
-                # 分散が低い = 不自然に滑らか = AI画像の特徴
-                score = 1.0 - min(var / 80.0, 1.0)
-                smoothness[y:y + block, x:x + block] = score
+                block_vars.append(var)
+                smoothness[y:y + block, x:x + block] = 1.0 - min(var / 300.0, 1.0)
 
         # 赤オーバーレイ（滑らかな箇所ほど赤く）
         original = np.array(img)
@@ -30,8 +30,11 @@ def analyze(image_bytes: bytes) -> dict:
         alpha = smoothness[:, :, np.newaxis] * 0.65
         overlay = np.clip(original * (1 - alpha) + red * alpha, 0, 255).astype(np.uint8)
 
-        overall_score = float(np.mean(smoothness))
-        score = min(overall_score / 0.6, 1.0)
+        block_vars_arr = np.array(block_vars)
+        mean_smoothness = float(np.mean(smoothness))
+        # テクスチャ多様性が高い（滑らか・詳細が混在）= 本物の写真らしい → スコアを下げる
+        texture_diversity = float(np.std(block_vars_arr)) / (float(np.mean(block_vars_arr)) + 1e-8)
+        score = min(mean_smoothness / (1.0 + texture_diversity * 0.3), 1.0)
 
         out = io.BytesIO()
         Image.fromarray(overlay).save(out, format="PNG")
