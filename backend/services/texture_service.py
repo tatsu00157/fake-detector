@@ -32,9 +32,9 @@ def analyze(image_bytes: bytes) -> dict:
 
         block_vars_arr = np.array(block_vars)
         mean_smoothness = float(np.mean(smoothness))
-        # CV（変動係数）：高い＝滑らか・詳細が混在（本物の写真）、低い＝均一に滑らか（AI画像）
-        cv = float(np.std(block_vars_arr)) / (float(np.mean(block_vars_arr)) + 1e-8)
-        score = min(mean_smoothness * (1.0 - min(cv / 2.0, 1.0)) / 0.5, 1.0)
+        # 分散800超のブロック割合：カメラ写真は髪・草・布など必ず存在、AI画像はほぼない
+        fine_detail_fraction = float(np.mean(block_vars_arr > 800))
+        score = max(0.0, min(mean_smoothness * (1.0 - fine_detail_fraction * 5.0) / 0.5, 1.0))
 
         out = io.BytesIO()
         Image.fromarray(overlay).save(out, format="PNG")

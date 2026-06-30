@@ -31,7 +31,7 @@ def _inconsistency_map(noise: np.ndarray, block: int = 32) -> np.ndarray:
 
     for i, (y, x) in enumerate(coords):
         deviation = abs(stds_arr[i] - median) / mad
-        heatmap[y:y + block, x:x + block] = min(deviation / 8.0, 1.0)
+        heatmap[y:y + block, x:x + block] = min(deviation / 5.0, 1.0)
 
     return heatmap
 
@@ -45,7 +45,7 @@ def analyze(image_bytes: bytes) -> dict:
         noise = _noise_residual(gray)
         heatmap = _inconsistency_map(noise)
 
-        score = min(float(np.mean(heatmap)) * 2.5, 1.0)
+        score = min(float(np.mean(heatmap)) * 3.0, 1.0)
 
         # オーバーレイ画像生成（赤でハイライト）
         original = np.array(img)
