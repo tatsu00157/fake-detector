@@ -15,13 +15,11 @@ def analyze(image_bytes: bytes) -> dict:
         h, w = gray.shape
         smoothness = np.zeros((h, w), dtype=float)
 
-        block_vars = []
         for y in range(0, h - block, block):
             for x in range(0, w - block, block):
                 patch = gray[y:y + block, x:x + block]
                 var = float(np.var(patch))
-                block_vars.append(var)
-                smoothness[y:y + block, x:x + block] = 1.0 - min(var / 80.0, 1.0)
+                smoothness[y:y + block, x:x + block] = 1.0 - min(var / 30.0, 1.0)
 
         # 赤オーバーレイ（滑らかな箇所ほど赤く）
         original = np.array(img)
@@ -30,11 +28,7 @@ def analyze(image_bytes: bytes) -> dict:
         alpha = smoothness[:, :, np.newaxis] * 0.65
         overlay = np.clip(original * (1 - alpha) + red * alpha, 0, 255).astype(np.uint8)
 
-        block_vars_arr = np.array(block_vars)
-        mean_smoothness = float(np.mean(smoothness))
-        # 分散800超のブロック割合：カメラ写真は髪・草・布など必ず存在、AI画像はほぼない
-        fine_detail_fraction = float(np.mean(block_vars_arr > 300))
-        score = max(0.0, min(mean_smoothness * (1.0 - fine_detail_fraction * 5.0) / 0.5, 1.0))
+        score = float(np.mean(smoothness))
 
         out = io.BytesIO()
         Image.fromarray(overlay).save(out, format="PNG")
