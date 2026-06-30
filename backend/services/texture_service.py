@@ -33,7 +33,7 @@ def analyze(image_bytes: bytes) -> dict:
         block_vars_arr = np.array(block_vars)
         mean_smoothness = float(np.mean(smoothness))
         # 分散800超のブロック割合：カメラ写真は髪・草・布など必ず存在、AI画像はほぼない
-        fine_detail_fraction = float(np.mean(block_vars_arr > 800))
+        fine_detail_fraction = float(np.mean(block_vars_arr > 300))
         score = max(0.0, min(mean_smoothness * (1.0 - fine_detail_fraction * 5.0) / 0.5, 1.0))
 
         out = io.BytesIO()
