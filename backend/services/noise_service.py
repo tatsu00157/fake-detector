@@ -21,12 +21,10 @@ def analyze(image_bytes: bytes) -> dict:
         h, w = gray.shape
         noise_map = np.zeros((h, w), dtype=np.float32)
 
-        noise_vars = []
         for y in range(0, h - block, block):
             for x in range(0, w - block, block):
                 patch = noise[y:y + block, x:x + block]
                 var = float(np.var(patch))
-                noise_vars.append(var)
                 noise_map[y:y + block, x:x + block] = 1.0 - min(var / 1.0, 1.0)
 
         # 赤オーバーレイ（ノイズが少なすぎる箇所ほど赤く）
@@ -36,10 +34,7 @@ def analyze(image_bytes: bytes) -> dict:
         alpha = noise_map[:, :, np.newaxis] * 0.65
         overlay = np.clip(original * (1 - alpha) + red * alpha, 0, 255).astype(np.uint8)
 
-        # p90：カメラ写真は自然なノイズがあるのでp90が高くなりスコア低
-        # AI画像：ほぼゼロノイズなのでp90が低くスコア高
-        p90_noise = float(np.percentile(noise_vars, 90))
-        score = max(0.0, 1.0 - p90_noise / 8.0)
+        score = float(np.mean(noise_map))
 
         out = io.BytesIO()
         Image.fromarray(overlay).save(out, format="PNG")
