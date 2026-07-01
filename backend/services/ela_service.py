@@ -34,9 +34,7 @@ def analyze(image_bytes: bytes) -> dict:
         ]
         local_max_std = float(np.std(local_maxes)) if local_maxes else 0.0
 
-        global_score = min(std / 12.0, 1.0)
-        hotspot_score = min(local_max_std / 15.0, 1.0)
-        score = max(global_score, hotspot_score)
+        score = min(float(np.mean(diff_arr)) / 12.0, 1.0)
 
         # PNGはJPEG変換時に均一なアーティファクトが発生するためスコアを補正
         if not is_jpeg:

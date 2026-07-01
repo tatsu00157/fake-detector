@@ -47,7 +47,7 @@ def analyze(image_bytes: bytes) -> dict:
         _, buf = cv2.imencode(".jpg", overlay)
         img_b64 = f"data:image/jpeg;base64,{base64.b64encode(buf).decode()}"
 
-        score = min(suspicious_ratio * 2.0, 1.0)
+        score = suspicious_ratio
         label = "suspicious" if score > 0.6 else "warning" if score > 0.3 else "clean"
 
         return {
