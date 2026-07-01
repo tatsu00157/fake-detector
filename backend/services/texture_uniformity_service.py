@@ -32,36 +32,56 @@ def analyze(image_bytes: bytes) -> dict:
         hf_map = np.abs(laplacian)
 
         skin = _skin_mask(arr)
-        region_mask = cv2.dilate(skin, np.ones((15, 15), np.uint8)) if np.sum(skin) >= 1000 else np.ones((h, w), dtype=np.uint8) * 255
+        has_skin = np.sum(skin) >= 1000
 
-        hf_values = []
-        coords = []
+        if not has_skin:
+            return {
+                "score": 0.0,
+                "label": "clean",
+                "image": None,
+                "details": {
+                    "判定": "解析対象の領域が検出されませんでした",
+                    "解説": "均一化の検出には対象となる肌色領域が必要です",
+                },
+            }
+
+        region_mask = cv2.dilate(skin, np.ones((15, 15), np.uint8))
+
+        skin_hf = []
+        nonskin_hf = []
+        skin_coords = []
 
         for i in range(block_h):
             for j in range(block_w):
                 by, bx = i * BLOCK_SIZE, j * BLOCK_SIZE
-                if np.mean(region_mask[by:by + BLOCK_SIZE, bx:bx + BLOCK_SIZE]) < 128:
-                    continue
-                hf_values.append(float(np.mean(hf_map[by:by + BLOCK_SIZE, bx:bx + BLOCK_SIZE])))
-                coords.append((i, j))
+                block_mask = region_mask[by:by + BLOCK_SIZE, bx:bx + BLOCK_SIZE]
+                block_hf = float(np.mean(hf_map[by:by + BLOCK_SIZE, bx:bx + BLOCK_SIZE]))
+                if np.mean(block_mask) >= 128:
+                    skin_hf.append(block_hf)
+                    skin_coords.append((i, j))
+                else:
+                    nonskin_hf.append(block_hf)
 
-        if not hf_values:
-            return {"score": 0, "label": "clean", "image": None, "details": {"判定": "解析対象領域が見つかりませんでした"}}
+        if len(skin_hf) < 4:
+            return {"score": 0.0, "label": "clean", "image": None, "details": {"判定": "解析対象領域が不十分です"}}
 
-        hf_arr = np.array(hf_values)
-        mean_hf = np.mean(hf_arr) + 1e-8
-        threshold = mean_hf * 0.4
+        mean_skin = float(np.mean(skin_hf))
+        mean_nonskin = float(np.mean(nonskin_hf)) if len(nonskin_hf) >= 4 else mean_skin
 
+        # 肌のHFが背景より異常に低い場合 = 平滑化フィルター適用の疑い
+        # ratio: 1.0=同等, <1=肌が滑らか, >1=背景が滑らか(ボケ背景など)
+        ratio = mean_skin / (mean_nonskin + 1e-8)
+        score = float(np.clip(1.0 - ratio, 0.0, 1.0))
+        score = min(score * 1.5, 1.0)
+
+        # ヒートマップ: スキン領域でHFが低いブロックを赤でハイライト
+        std_skin = float(np.std(skin_hf)) + 1e-8
         anomaly_map = np.zeros((block_h, block_w), dtype=np.float32)
-        for idx, (i, j) in enumerate(coords):
-            if hf_values[idx] < threshold:
-                anomaly_map[i, j] = 1 - (hf_values[idx] / mean_hf)
+        for idx, (i, j) in enumerate(skin_coords):
+            z = (mean_skin - skin_hf[idx]) / std_skin
+            anomaly_map[i, j] = float(np.clip(z / 2.0, 0, 1))
 
-        valid = anomaly_map[anomaly_map > 0]
-        score = float(np.mean(valid)) if len(valid) > 0 else 0.0
-        score = min(score * 2.0, 1.0)
-
-        mask_small = (anomaly_map > 0.3).astype(np.uint8) * 255
+        mask_small = (anomaly_map > 0.4).astype(np.uint8) * 255
         mask = cv2.resize(mask_small, (w, h), interpolation=cv2.INTER_NEAREST).astype(np.float32) / 255.0
         alpha = mask[:, :, np.newaxis] * 0.6
         red = np.zeros_like(arr, dtype=np.float32)
