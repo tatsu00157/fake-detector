@@ -68,12 +68,6 @@ def analyze(image_bytes: bytes) -> dict:
         mean_skin = float(np.mean(skin_hf))
         mean_nonskin = float(np.mean(nonskin_hf)) if len(nonskin_hf) >= 4 else mean_skin
 
-        # 肌のHFが背景より異常に低い場合 = 平滑化フィルター適用の疑い
-        # ratio: 1.0=同等, <1=肌が滑らか, >1=背景が滑らか(ボケ背景など)
-        ratio = mean_skin / (mean_nonskin + 1e-8)
-        score = float(np.clip(1.0 - ratio, 0.0, 1.0))
-        score = min(score * 1.5, 1.0)
-
         # ヒートマップ: スキン領域でHFが低いブロックを赤でハイライト
         std_skin = float(np.std(skin_hf)) + 1e-8
         anomaly_map = np.zeros((block_h, block_w), dtype=np.float32)
@@ -81,7 +75,13 @@ def analyze(image_bytes: bytes) -> dict:
             z = (mean_skin - skin_hf[idx]) / std_skin
             anomaly_map[i, j] = float(np.clip(z / 2.0, 0, 1))
 
-        mask_small = (anomaly_map > 0.4).astype(np.uint8) * 255
+        # スコア = ヒートマップで赤くなったブロックの割合をそのまま数値化
+        HEATMAP_THRESHOLD = 0.4
+        flagged = float(np.sum(anomaly_map > HEATMAP_THRESHOLD))
+        score = flagged / len(skin_coords) if skin_coords else 0.0
+        score = min(score * 2.0, 1.0)
+
+        mask_small = (anomaly_map > HEATMAP_THRESHOLD).astype(np.uint8) * 255
         mask = cv2.resize(mask_small, (w, h), interpolation=cv2.INTER_NEAREST).astype(np.float32) / 255.0
         alpha = mask[:, :, np.newaxis] * 0.6
         red = np.zeros_like(arr, dtype=np.float32)
