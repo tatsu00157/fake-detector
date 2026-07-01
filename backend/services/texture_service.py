@@ -6,7 +6,7 @@ from PIL import Image
 from .base import get_label, error_result
 
 BLOCK = 8
-HEATMAP_THRESHOLD = 0.5  # smoothness > 0.5 = variance < 10 = 不自然に滑らか
+HEATMAP_THRESHOLD = 0.7  # smoothness > 0.7 = variance < 6 = 不自然に滑らか
 
 
 def analyze(image_bytes: bytes) -> dict:

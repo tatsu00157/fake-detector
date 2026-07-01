@@ -6,7 +6,7 @@ from PIL import Image
 from .base import get_label, error_result
 
 BLOCK = 16
-HEATMAP_THRESHOLD = 0.5  # noise_map > 0.5 = noise variance < 2.5 = ノイズが少なすぎる
+HEATMAP_THRESHOLD = 0.7  # noise_map > 0.7 = noise variance < 1.5 = ノイズが少なすぎる
 
 
 def analyze(image_bytes: bytes) -> dict:
