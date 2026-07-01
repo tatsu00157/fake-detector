@@ -76,7 +76,7 @@ def analyze(image_bytes: bytes) -> dict:
             anomaly_map[i, j] = float(np.clip(z / 2.0, 0, 1))
 
         # スコア = ヒートマップで赤くなったブロックの割合をそのまま数値化
-        HEATMAP_THRESHOLD = 0.4
+        HEATMAP_THRESHOLD = 0.6
         flagged = float(np.sum(anomaly_map > HEATMAP_THRESHOLD))
         score = flagged / len(skin_coords) if skin_coords else 0.0
 

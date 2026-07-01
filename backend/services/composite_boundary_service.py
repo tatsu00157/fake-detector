@@ -6,6 +6,7 @@ from PIL import Image
 from .base import get_label, error_result
 
 BLOCK_SIZE = 16
+ELA_THRESHOLD = 15  # 絶対値閾値（0-255スケール）
 
 
 def analyze(image_bytes: bytes) -> dict:
@@ -20,37 +21,21 @@ def analyze(image_bytes: bytes) -> dict:
         if block_h < 2 or block_w < 2:
             return {"score": 0, "label": "clean", "image": None, "details": {"判定": "画像が小さすぎます"}}
 
-        # ELA: re-compress at quality 75 and compute difference
         buf = io.BytesIO()
         img_pil.save(buf, format="JPEG", quality=75)
         buf.seek(0)
         recompressed = np.array(Image.open(buf).convert("RGB")).astype(np.float32)
-        ela = np.abs(arr.astype(np.float32) - recompressed)
-        ela_gray = np.mean(ela, axis=2)
-
-        # Edge proximity: high ELA near edges = suspicious boundary
-        gray = cv2.cvtColor(arr, cv2.COLOR_RGB2GRAY)
-        edges = cv2.Canny(gray, 50, 150)
-        edge_region = cv2.dilate(edges, np.ones((5, 5), np.uint8))
+        ela_gray = np.mean(np.abs(arr.astype(np.float32) - recompressed), axis=2)
 
         ela_block = np.zeros((block_h, block_w))
         for i in range(block_h):
             for j in range(block_w):
                 by, bx = i * BLOCK_SIZE, j * BLOCK_SIZE
-                block_ela = ela_gray[by:by + BLOCK_SIZE, bx:bx + BLOCK_SIZE]
-                block_edge = edge_region[by:by + BLOCK_SIZE, bx:bx + BLOCK_SIZE]
-                edge_weight = float(np.mean(block_edge)) / 255.0 + 0.1
-                ela_block[i, j] = float(np.mean(block_ela)) * edge_weight
+                ela_block[i, j] = float(np.mean(ela_gray[by:by + BLOCK_SIZE, bx:bx + BLOCK_SIZE]))
 
-        mean_ela = np.mean(ela_block)
-        std_ela = np.std(ela_block) + 1e-8
-        z_scores = (ela_block - mean_ela) / std_ela
-        anomaly_map = np.clip(z_scores / 3.0, 0, 1)
+        score = float(np.sum(ela_block > ELA_THRESHOLD)) / ela_block.size
 
-        HEATMAP_THRESHOLD = 0.3
-        score = float(np.sum(anomaly_map > HEATMAP_THRESHOLD)) / anomaly_map.size
-
-        mask_small = (anomaly_map > HEATMAP_THRESHOLD).astype(np.uint8) * 255
+        mask_small = (ela_block > ELA_THRESHOLD).astype(np.uint8) * 255
         mask = cv2.resize(mask_small, (w, h), interpolation=cv2.INTER_NEAREST).astype(np.float32) / 255.0
         alpha = mask[:, :, np.newaxis] * 0.6
         red = np.zeros_like(arr, dtype=np.float32)
@@ -74,7 +59,7 @@ def analyze(image_bytes: bytes) -> dict:
             "image": f"data:image/png;base64,{img_b64}",
             "details": {
                 "判定": judgment,
-                "解説": "赤くハイライトされた箇所がJPEG圧縮誤差とエッジの不自然さから合成・切り貼りの疑いがある領域です",
+                "解説": "赤くハイライトされた箇所がJPEG再圧縮誤差の高い（切り貼り・合成の疑いがある）領域です",
             },
         }
     except Exception as e:

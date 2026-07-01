@@ -6,7 +6,7 @@ from PIL import Image
 from .base import get_label, error_result
 
 BLOCK_SIZE = 32
-HEATMAP_THRESHOLD = 0.3
+HEATMAP_THRESHOLD = 0.5
 
 
 def analyze(image_bytes: bytes) -> dict:
