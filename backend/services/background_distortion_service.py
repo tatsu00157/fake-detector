@@ -6,6 +6,7 @@ from PIL import Image
 from .base import get_label, error_result
 
 BLOCK_SIZE = 32
+HEATMAP_THRESHOLD = 0.3
 
 
 def analyze(image_bytes: bytes) -> dict:
@@ -18,40 +19,50 @@ def analyze(image_bytes: bytes) -> dict:
         block_h = h // BLOCK_SIZE
         block_w = w // BLOCK_SIZE
 
-        if block_h < 2 or block_w < 2:
+        if block_h < 3 or block_w < 3:
             return {"score": 0, "label": "clean", "image": None, "details": {"判定": "画像が小さすぎます"}}
 
-        sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)
-        sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3)
+        sobelx = cv2.Sobel(gray, cv2.CV_32F, 1, 0, ksize=3)
+        sobely = cv2.Sobel(gray, cv2.CV_32F, 0, 1, ksize=3)
         magnitude = np.sqrt(sobelx ** 2 + sobely ** 2)
         angle = np.arctan2(sobely, sobelx)
 
-        block_scores = np.zeros((block_h, block_w))
+        dominant_angles = np.full((block_h, block_w), np.nan)
+        valid_mask = np.zeros((block_h, block_w), dtype=bool)
 
         for i in range(block_h):
             for j in range(block_w):
                 by, bx = i * BLOCK_SIZE, j * BLOCK_SIZE
                 block_mag = magnitude[by:by + BLOCK_SIZE, bx:bx + BLOCK_SIZE]
                 block_ang = angle[by:by + BLOCK_SIZE, bx:bx + BLOCK_SIZE]
-
-                total_mag = np.sum(block_mag)
+                total_mag = float(np.sum(block_mag))
                 if total_mag < 10:
                     continue
-
                 weights = block_mag / total_mag
-                sin_mean = np.sum(np.sin(block_ang) * weights)
-                cos_mean = np.sum(np.cos(block_ang) * weights)
-                R = np.sqrt(sin_mean ** 2 + cos_mean ** 2)
-                block_scores[i, j] = 1 - R  # circular variance: high = scattered directions
+                sin_m = float(np.sum(np.sin(block_ang) * weights))
+                cos_m = float(np.sum(np.cos(block_ang) * weights))
+                dominant_angles[i, j] = np.arctan2(sin_m, cos_m)
+                valid_mask[i, j] = True
 
-        median_score = np.median(block_scores)
-        mad = np.median(np.abs(block_scores - median_score)) + 1e-8
-        anomaly = np.clip((block_scores - median_score - mad) / (3 * mad), 0, 1)
+        # 隣接ブロックとの勾配方向の差を計算
+        anomaly_map = np.zeros((block_h, block_w), dtype=np.float32)
+        for i in range(block_h):
+            for j in range(block_w):
+                if not valid_mask[i, j]:
+                    continue
+                diffs = []
+                for di, dj in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                    ni, nj = i + di, j + dj
+                    if 0 <= ni < block_h and 0 <= nj < block_w and valid_mask[ni, nj]:
+                        d = dominant_angles[i, j] - dominant_angles[ni, nj]
+                        diffs.append(float(np.abs(np.arctan2(np.sin(d), np.cos(d)))))
+                if diffs:
+                    anomaly_map[i, j] = float(np.mean(diffs)) / np.pi  # 0–1に正規化
 
-        HEATMAP_THRESHOLD = 0.3
-        score = float(np.sum(anomaly > HEATMAP_THRESHOLD)) / anomaly.size
+        total_valid = float(np.sum(valid_mask))
+        score = float(np.sum(anomaly_map > HEATMAP_THRESHOLD)) / total_valid if total_valid > 0 else 0.0
 
-        mask_small = (anomaly > HEATMAP_THRESHOLD).astype(np.uint8) * 255
+        mask_small = (anomaly_map > HEATMAP_THRESHOLD).astype(np.uint8) * 255
         mask = cv2.resize(mask_small, (w, h), interpolation=cv2.INTER_NEAREST).astype(np.float32) / 255.0
         alpha = mask[:, :, np.newaxis] * 0.6
         red = np.zeros_like(arr, dtype=np.float32)
@@ -75,7 +86,7 @@ def analyze(image_bytes: bytes) -> dict:
             "image": f"data:image/png;base64,{img_b64}",
             "details": {
                 "判定": judgment,
-                "解説": "赤くハイライトされた箇所が勾配方向の不整合（歪みの疑い）を示しています",
+                "解説": "赤くハイライトされた箇所が隣接ブロック間で勾配方向が急変している（歪みの疑い）領域です",
             },
         }
     except Exception as e:
