@@ -31,7 +31,7 @@ def _inconsistency_map(noise: np.ndarray, block: int = 32) -> np.ndarray:
 
     for i, (y, x) in enumerate(coords):
         deviation = abs(stds_arr[i] - median) / mad
-        heatmap[y:y + block, x:x + block] = min(deviation / 5.0, 1.0)
+        heatmap[y:y + block, x:x + block] = min(deviation / 3.0, 1.0)
 
     return heatmap
 
