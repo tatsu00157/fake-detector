@@ -21,12 +21,10 @@ def analyze(image_bytes: bytes) -> dict:
         h, w = gray.shape
         noise_map = np.zeros((h, w), dtype=np.float32)
 
-        noise_vars = []
         for y in range(0, h - block, block):
             for x in range(0, w - block, block):
                 patch = noise[y:y + block, x:x + block]
                 var = float(np.var(patch))
-                noise_vars.append(var)
                 noise_map[y:y + block, x:x + block] = 1.0 - min(var / 1.0, 1.0)
 
         # 赤オーバーレイ（ノイズが少なすぎる箇所ほど赤く）
@@ -36,14 +34,7 @@ def analyze(image_bytes: bytes) -> dict:
         alpha = noise_map[:, :, np.newaxis] * 0.65
         overlay = np.clip(original * (1 - alpha) + red * alpha, 0, 255).astype(np.uint8)
 
-        noise_vars_arr = np.array(noise_vars)
-        mean_noise_var = float(np.mean(noise_vars_arr))
-        cv_noise = float(np.std(noise_vars_arr)) / (mean_noise_var + 1e-8)
-        # AI画像：均一に低ノイズ（低mean・低CV）→高スコア
-        # カメラ写真：ノイズが高いまたは不均一（高CV）→低スコア
-        low_noise_component = max(0.0, 1.0 - mean_noise_var / 5.0)
-        uniform_component = max(0.0, 1.0 - cv_noise / 2.0)
-        score = low_noise_component * uniform_component
+        score = float(np.mean(noise_map))
 
         out = io.BytesIO()
         Image.fromarray(overlay).save(out, format="PNG")
