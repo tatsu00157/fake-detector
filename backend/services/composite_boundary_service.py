@@ -47,10 +47,11 @@ def analyze(image_bytes: bytes) -> dict:
         z_scores = (ela_block - mean_ela) / std_ela
         anomaly_map = np.clip(z_scores / 3.0, 0, 1)
 
-        score = float(np.mean(anomaly_map))
+        HEATMAP_THRESHOLD = 0.3
+        score = float(np.sum(anomaly_map > HEATMAP_THRESHOLD)) / anomaly_map.size
         score = min(score * 4.0, 1.0)
 
-        mask_small = (anomaly_map > 0.3).astype(np.uint8) * 255
+        mask_small = (anomaly_map > HEATMAP_THRESHOLD).astype(np.uint8) * 255
         mask = cv2.resize(mask_small, (w, h), interpolation=cv2.INTER_NEAREST).astype(np.float32) / 255.0
         alpha = mask[:, :, np.newaxis] * 0.6
         red = np.zeros_like(arr, dtype=np.float32)
