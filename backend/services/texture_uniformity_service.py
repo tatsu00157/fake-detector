@@ -28,7 +28,7 @@ def analyze(image_bytes: bytes) -> dict:
         if block_h < 2 or block_w < 2:
             return {"score": 0, "label": "clean", "image": None, "details": {"判定": "画像が小さすぎます"}}
 
-        laplacian = cv2.Laplacian(gray, cv2.CV_64F)
+        laplacian = cv2.Laplacian(gray, cv2.CV_32F)
         hf_map = np.abs(laplacian)
 
         skin = _skin_mask(arr)
