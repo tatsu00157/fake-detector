@@ -19,7 +19,7 @@ def analyze(image_bytes: bytes) -> dict:
             for x in range(0, w - block, block):
                 patch = gray[y:y + block, x:x + block]
                 var = float(np.var(patch))
-                smoothness[y:y + block, x:x + block] = 1.0 - min(var / 30.0, 1.0)
+                smoothness[y:y + block, x:x + block] = 1.0 - min(var / 20.0, 1.0)
 
         # 赤オーバーレイ（滑らかな箇所ほど赤く）
         original = np.array(img)

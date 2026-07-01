@@ -36,7 +36,7 @@ def analyze(image_bytes: bytes) -> dict:
         std_noise = float(np.std(noises))
         cov = std_noise / (mean_noise + 1e-8)
 
-        outlier_mask = np.abs(noises - mean_noise) > 3 * std_noise
+        outlier_mask = np.abs(noises - mean_noise) > 2 * std_noise
         outlier_ratio = float(np.sum(outlier_mask) / len(noises))
 
         score = min((cov / 2.0 * 0.3) + (outlier_ratio / 0.1 * 0.7), 1.0)

@@ -4,7 +4,7 @@ from PIL import Image
 import io
 import base64
 
-BLOCK_SIZE = 64
+BLOCK_SIZE = 32
 
 
 def analyze(image_bytes: bytes) -> dict:
@@ -34,7 +34,7 @@ def analyze(image_bytes: bytes) -> dict:
             return {"score": 0, "label": "clean", "image": None, "details": {"判定": "解析不能"}}
 
         deviation = np.abs(block_stds - mean_std) / mean_std
-        inconsistent_ratio = float(np.mean(deviation > 0.7))
+        inconsistent_ratio = float(np.mean(deviation > 0.5))
 
         mask_small = (deviation > 0.7).astype(np.uint8) * 255
         mask = cv2.resize(mask_small, (w, h), interpolation=cv2.INTER_NEAREST)

@@ -25,7 +25,7 @@ def analyze(image_bytes: bytes) -> dict:
             for x in range(0, w - block, block):
                 patch = noise[y:y + block, x:x + block]
                 var = float(np.var(patch))
-                noise_map[y:y + block, x:x + block] = 1.0 - min(var / 2.0, 1.0)
+                noise_map[y:y + block, x:x + block] = 1.0 - min(var / 1.0, 1.0)
 
         # 赤オーバーレイ（ノイズが少なすぎる箇所ほど赤く）
         original = arr.astype(np.uint8)
