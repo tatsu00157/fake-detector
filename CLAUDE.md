@@ -57,7 +57,7 @@
 - `backend/services/similarity_service.py` — SSIM＋パーセプチュアルハッシュで類似度をパーセント表示。label="similarity"。score=similarity/100で実際の類似度を反映
 - `backend/requirements.txt` — 全依存パッケージ（slowapi==0.1.9追加済み）
 - `supabase/schema.sql` — usage_logs・subscriptionsテーブル定義（Supabase SQLエディタで実行）
-- AI判定スコア：2指標（テクスチャ・ノイズレベル）の平均。Exifは表示のみでスコア計算対象外（AI画像60・それ以外40固定で意味をなさないため）
+- AI判定スコア：3指標（Exif・テクスチャ・ノイズレベル）の平均。Exifはメタデータなし→0.8・AI署名→0.95・コアフィールド欠けるごとに+0.12（上限0.6）の段階スコア
 - 加工判定スコア：4指標（ノイズ整合性・DCT・PRNU・ノイズCoV）の平均。ELAはスコア計算対象外・参考表示のみ
 
 ## プロジェクト概要

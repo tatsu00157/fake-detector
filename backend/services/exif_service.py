@@ -59,8 +59,8 @@ def analyze(image_bytes: bytes) -> dict:
 
         if not tags:
             return {
-                "score": 0.6,
-                "label": "warning",
+                "score": 0.8,
+                "label": "suspicious",
                 "details": {
                     "カメラ情報": "なし（AI生成画像はカメラ情報を持たないことが多い）",
                 },
@@ -85,6 +85,7 @@ def analyze(image_bytes: bytes) -> dict:
         core_fields = ["Image Make", "Image Model", "EXIF ExposureTime", "EXIF ISOSpeedRatings", "EXIF FocalLength"]
         missing_count = sum(1 for f in core_fields if f not in raw_tags)
 
+        core_count = len(core_fields) - missing_count
         score = 0.0
         if ai_signatures:
             score = 0.95
@@ -92,8 +93,8 @@ def analyze(image_bytes: bytes) -> dict:
         elif any(t in software for t in AI_TOOL_SIGNATURES):
             score = 0.85
             metadata["AI署名"] = raw_tags.get("Image Software", "")
-        elif missing_count >= 4:
-            score = 0.4
+        else:
+            score = min(missing_count * 0.12, 0.6)
 
         return {
             "score": float(score),
