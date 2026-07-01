@@ -15,10 +15,12 @@ def analyze(image_bytes: bytes) -> dict:
         h, w = gray.shape
         smoothness = np.zeros((h, w), dtype=float)
 
+        block_vars = []
         for y in range(0, h - block, block):
             for x in range(0, w - block, block):
                 patch = gray[y:y + block, x:x + block]
                 var = float(np.var(patch))
+                block_vars.append(var)
                 smoothness[y:y + block, x:x + block] = 1.0 - min(var / 20.0, 1.0)
 
         # 赤オーバーレイ（滑らかな箇所ほど赤く）
@@ -28,7 +30,14 @@ def analyze(image_bytes: bytes) -> dict:
         alpha = smoothness[:, :, np.newaxis] * 0.65
         overlay = np.clip(original * (1 - alpha) + red * alpha, 0, 255).astype(np.uint8)
 
-        score = float(np.mean(smoothness))
+        block_vars_arr = np.array(block_vars)
+        mean_var = float(np.mean(block_vars_arr))
+        cv = float(np.std(block_vars_arr)) / (mean_var + 1e-8)
+        # AI画像：均一に滑らか（低mean_var・低CV）→高スコア
+        # カメラ写真：滑らか・詳細が混在（高CV）または全体的に高分散 → 低スコア
+        smooth_component = max(0.0, 1.0 - mean_var / 150.0)
+        uniform_component = max(0.0, 1.0 - cv / 1.5)
+        score = smooth_component * uniform_component
 
         out = io.BytesIO()
         Image.fromarray(overlay).save(out, format="PNG")

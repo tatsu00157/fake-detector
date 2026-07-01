@@ -47,8 +47,8 @@
 - `backend/routers/stripe_router.py` — 未使用（コードは保持）
 - `backend/services/exif_service.py` — Exifメタデータ解析・AIツール署名チェック。値が存在するフィールドのみ日本語ラベルで表示。メタデータなし→スコア0.6（カメラ情報の完全欠如はAI疑い）
 - `backend/services/ela_service.py` — ELA解析（局所ホットスポット検出含む）
-- `backend/services/texture_service.py` — 局所テクスチャ分散マップ。不自然に滑らかな領域を赤でハイライト（AI生成画像に特有）。分散閾値30（ほぼフラットなブロックのみ検出）。スコア＝赤の平均値そのまま
-- `backend/services/noise_service.py` — ノイズレベル解析。ノイズが少なすぎる領域を赤でハイライト（AI生成画像に特有）。ノイズ分散閾値2（ほぼゼロノイズのブロックのみ検出）。スコア＝赤の平均値そのまま
+- `backend/services/texture_service.py` — 局所テクスチャ分散マップ。不自然に滑らかな領域を赤でハイライト（AI生成画像に特有）。可視化は分散閾値20。スコアはCV方式：smooth（mean_var/150）× uniform（cv/1.5）の積。SDなど質感があるAI画像も均一性で判別可能
+- `backend/services/noise_service.py` — ノイズレベル解析。ノイズが少なすぎる領域を赤でハイライト（AI生成画像に特有）。可視化はノイズ分散閾値1。スコアはCV方式：low_noise（mean/5）× uniform（cv/2）の積
 - `backend/services/noise_consistency_service.py` — ノイズ整合性解析。不整合ブロックのみ赤でハイライト。偏差閾値0.7・係数1.5（元のパラメータ。AI画像の誤検出を防ぐ）。詳細は判定テキスト＋見方のみ表示（割合数値は非表示）
 - `backend/services/dct_splicing_service.py` — DCTスプライシング検出。異常ブロックのみ赤でハイライト。z閾値2.5・係数2.0（元のパラメータ。AI画像の誤検出を防ぐ）。詳細は判定テキスト＋見方のみ表示（割合数値は非表示）
 - `backend/services/prnu_service.py` — ノイズ残差マップ（最高精度の加工検出）。全ユーザーに実行。偏差閾値5.0・スコア＝ヒートマップ平均値×3.0（元のパラメータに戻し正常な判定を維持）。詳細は判定テキスト＋見方のみ表示（割合数値は非表示）
