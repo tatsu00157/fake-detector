@@ -6,7 +6,7 @@ from PIL import Image
 from .base import get_label, error_result
 
 BLOCK_SIZE = 16
-ELA_THRESHOLD = 10  # 絶対値閾値（0-255スケール）
+ELA_THRESHOLD = 5  # 絶対値閾値（0-255スケール）
 
 
 def analyze(image_bytes: bytes) -> dict:
