@@ -1,8 +1,12 @@
 import io
 import base64
 import numpy as np
+import cv2
 from PIL import Image
 from .base import get_label, error_result
+
+BLOCK = 8
+HEATMAP_THRESHOLD = 0.5  # smoothness > 0.5 = variance < 10 = 不自然に滑らか
 
 
 def analyze(image_bytes: bytes) -> dict:
@@ -11,31 +15,30 @@ def analyze(image_bytes: bytes) -> dict:
         arr = np.array(img, dtype=float)
         gray = np.mean(arr, axis=2)
 
-        block = 8
         h, w = gray.shape
         smoothness = np.zeros((h, w), dtype=float)
 
-        for y in range(0, h - block, block):
-            for x in range(0, w - block, block):
-                patch = gray[y:y + block, x:x + block]
+        for y in range(0, h - BLOCK, BLOCK):
+            for x in range(0, w - BLOCK, BLOCK):
+                patch = gray[y:y + BLOCK, x:x + BLOCK]
                 var = float(np.var(patch))
-                smoothness[y:y + block, x:x + block] = 1.0 - min(var / 20.0, 1.0)
+                smoothness[y:y + BLOCK, x:x + BLOCK] = 1.0 - min(var / 20.0, 1.0)
 
-        # 赤オーバーレイ（滑らかな箇所ほど赤く）
+        score = float(np.sum(smoothness > HEATMAP_THRESHOLD)) / smoothness.size
+
+        mask = (smoothness > HEATMAP_THRESHOLD).astype(np.float32)
+        alpha = mask[:, :, np.newaxis] * 0.65
         original = np.array(img)
-        red = np.zeros_like(original)
+        red = np.zeros_like(original, dtype=float)
         red[:, :, 0] = 255
-        alpha = smoothness[:, :, np.newaxis] * 0.65
         overlay = np.clip(original * (1 - alpha) + red * alpha, 0, 255).astype(np.uint8)
-
-        score = float(np.mean(smoothness))
 
         out = io.BytesIO()
         Image.fromarray(overlay).save(out, format="PNG")
         img_b64 = base64.b64encode(out.getvalue()).decode()
 
         return {
-            "score": float(score),
+            "score": round(score, 3),
             "label": get_label(score),
             "details": {
                 "解説": "赤い箇所が不自然に滑らかな領域（AI画像に特有）",
