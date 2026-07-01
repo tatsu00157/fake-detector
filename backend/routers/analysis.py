@@ -1,9 +1,9 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException, Request
 from core.limiter import limiter
 from services import (
-    exif_service, ela_service, manipulation_service,
-    prnu_service, texture_service, noise_service,
-    noise_consistency_service, dct_splicing_service,
+    exif_service, ela_service, texture_service, noise_service,
+    background_distortion_service, texture_uniformity_service,
+    lighting_inconsistency_service, composite_boundary_service,
 )
 
 router = APIRouter(tags=["analysis"])
@@ -12,7 +12,7 @@ ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 MAX_BYTES = 20 * 1024 * 1024
 
 AI_KEYS           = ["exif", "texture", "noise"]
-MANIPULATION_KEYS = ["manipulation", "noise_consistency", "dct_splicing", "prnu"]
+MANIPULATION_KEYS = ["background_distortion", "texture_uniformity", "lighting_inconsistency", "composite_boundary"]
 
 
 def _validate(file: UploadFile):
@@ -35,14 +35,14 @@ async def analyze_image(request: Request, file: UploadFile = File(...)):
         raise HTTPException(400, "ファイルサイズが大きすぎます（最大20MB）")
 
     results = {
-        "exif":               exif_service.analyze(image_bytes),
-        "ela":                ela_service.analyze(image_bytes),
-        "manipulation":       manipulation_service.analyze(image_bytes),
-        "texture":            texture_service.analyze(image_bytes),
-        "noise":              noise_service.analyze(image_bytes),
-        "noise_consistency":  noise_consistency_service.analyze(image_bytes),
-        "dct_splicing":       dct_splicing_service.analyze(image_bytes),
-        "prnu":               prnu_service.analyze(image_bytes),
+        "exif":                    exif_service.analyze(image_bytes),
+        "ela":                     ela_service.analyze(image_bytes),
+        "texture":                 texture_service.analyze(image_bytes),
+        "noise":                   noise_service.analyze(image_bytes),
+        "background_distortion":   background_distortion_service.analyze(image_bytes),
+        "texture_uniformity":      texture_uniformity_service.analyze(image_bytes),
+        "lighting_inconsistency":  lighting_inconsistency_service.analyze(image_bytes),
+        "composite_boundary":      composite_boundary_service.analyze(image_bytes),
     }
 
     ai_score,           ai_label           = _score_label(results, AI_KEYS)

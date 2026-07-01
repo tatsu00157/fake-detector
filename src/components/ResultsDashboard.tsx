@@ -136,11 +136,11 @@ export default function ResultsDashboard({ analysis, comparison }: Props) {
             score={analysis.manipulation_score}
             label={analysis.manipulation_label}
             tabs={[
-              { key: 'noise_consistency', label: 'ノイズ整合性',  result: analysis.noise_consistency },
-              { key: 'dct',               label: 'DCT',           result: analysis.dct_splicing },
-              ...(analysis.prnu ? [{ key: 'prnu', label: 'ノイズ残差マップ', result: analysis.prnu }] : []),
-              { key: 'manipulation',      label: 'ノイズCoV',     result: analysis.manipulation },
-              { key: 'ela',               label: 'ELA（参考）',   result: analysis.ela },
+              { key: 'background_distortion',  label: '背景の歪み',          result: analysis.background_distortion },
+              { key: 'texture_uniformity',      label: 'テクスチャの均一化',  result: analysis.texture_uniformity },
+              { key: 'lighting_inconsistency',  label: '光源・影の不整合',    result: analysis.lighting_inconsistency },
+              { key: 'composite_boundary',      label: '切り貼り・合成の痕跡', result: analysis.composite_boundary },
+              { key: 'ela',                     label: 'ELA（参考）',         result: analysis.ela },
             ]}
           />
         </>

@@ -8,12 +8,12 @@ export interface AnalysisResult {
 export interface FullAnalysis {
   exif: AnalysisResult;
   ela: AnalysisResult;
-  manipulation: AnalysisResult;
   texture: AnalysisResult;
   noise: AnalysisResult;
-  noise_consistency: AnalysisResult;
-  dct_splicing: AnalysisResult;
-  prnu?: AnalysisResult;
+  background_distortion: AnalysisResult;
+  texture_uniformity: AnalysisResult;
+  lighting_inconsistency: AnalysisResult;
+  composite_boundary: AnalysisResult;
   ai_score: number;
   ai_label: 'clean' | 'warning' | 'suspicious';
   manipulation_score: number;
