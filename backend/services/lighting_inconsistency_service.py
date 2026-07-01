@@ -60,7 +60,6 @@ def analyze(image_bytes: bytes) -> dict:
         HEATMAP_THRESHOLD = 0.5
         total_valid = float(np.sum(~np.isnan(dominant_angles)))
         score = float(np.sum(anomaly_map > HEATMAP_THRESHOLD)) / total_valid if total_valid > 0 else 0.0
-        score = min(score * 3.0, 1.0)
 
         mask_small = (anomaly_map > HEATMAP_THRESHOLD).astype(np.uint8) * 255
         mask = cv2.resize(mask_small, (w, h), interpolation=cv2.INTER_NEAREST).astype(np.float32) / 255.0

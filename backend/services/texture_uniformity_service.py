@@ -79,7 +79,6 @@ def analyze(image_bytes: bytes) -> dict:
         HEATMAP_THRESHOLD = 0.4
         flagged = float(np.sum(anomaly_map > HEATMAP_THRESHOLD))
         score = flagged / len(skin_coords) if skin_coords else 0.0
-        score = min(score * 2.0, 1.0)
 
         mask_small = (anomaly_map > HEATMAP_THRESHOLD).astype(np.uint8) * 255
         mask = cv2.resize(mask_small, (w, h), interpolation=cv2.INTER_NEAREST).astype(np.float32) / 255.0
