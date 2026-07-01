@@ -82,10 +82,10 @@ def analyze(image_bytes: bytes) -> dict:
             if field not in CAMERA_FIELD_LABELS and field not in HIDDEN_FIELDS:
                 metadata[field] = value
 
-        core_fields = ["Image Make", "Image Model", "EXIF ExposureTime", "EXIF ISOSpeedRatings", "EXIF FocalLength"]
-        missing_count = sum(1 for f in core_fields if f not in raw_tags)
+        has_make  = "Image Make"  in raw_tags
+        has_model = "Image Model" in raw_tags
+        has_camera_tech = any(f in raw_tags for f in ["EXIF ExposureTime", "EXIF ISOSpeedRatings", "EXIF FocalLength"])
 
-        core_count = len(core_fields) - missing_count
         score = 0.0
         if ai_signatures:
             score = 0.95
@@ -93,8 +93,14 @@ def analyze(image_bytes: bytes) -> dict:
         elif any(t in software for t in AI_TOOL_SIGNATURES):
             score = 0.85
             metadata["AI署名"] = raw_tags.get("Image Software", "")
+        elif has_make and has_model:
+            score = 0.0
+        elif has_make or has_model:
+            score = 0.15
+        elif has_camera_tech:
+            score = 0.25
         else:
-            score = min(missing_count * 0.12, 0.6)
+            score = 0.5
 
         return {
             "score": float(score),
