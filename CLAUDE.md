@@ -19,7 +19,7 @@
 - `src/components/AnalysisCard.tsx` — 解析項目カード（スコアバー・詳細展開・画像表示）
 - `src/components/ResultsDashboard.tsx` — AI生成検出・加工検出をタブUI（メタデータ・テクスチャ・ノイズ等）で切り替え表示。セクションごとの総合スコアバッジ。タブに判定カラードット表示。結果上部に参考情報である旨の免責注意書き表示。スコア表示は小数点第一位。比較結果セクションはタブ切り替えでヘッダーのラベル・スコアが連動（useTabScore）。LABEL_MAPにdiff（差異率）・similarity（類似度）を追加（青・#3b82f6）。差分・類似度タブはスコアバー非表示・詳細欄に数値表示
 - `src/components/ExplanationsSection.tsx` — 解析指標の説明・マップの見方・スコア基準。Home.tsxで常時表示。2枚比較（差分検出・類似度判定）の説明も含む。スコアの見方をAI生成検出・加工検出用と2枚比較用に分離して表示
-- `src/types/analysis.ts` — 解析結果の型定義。noise_consistency・dct_splicing・prnu?。labelに'diff'|'similarity'を追加
+- `src/types/analysis.ts` — 解析結果の型定義。background_distortion・texture_uniformity・lighting_inconsistency・composite_boundary。labelに'diff'|'similarity'を追加
 - `src/lib/supabase.ts` — Supabaseクライアント
 - `src/context/AuthContext.tsx` — 認証状態管理（ログイン・ログアウト・セッション）
 - `src/api/client.ts` — 認証なし・シンプルなfetch。analyzeImage・compareImagesのみ。429エラーは日本語メッセージで表示
@@ -42,17 +42,17 @@
 - `backend/core/limiter.py` — slowapi Limiterインスタンス（IPアドレスベース）
 - `backend/core/config.py` — 環境変数設定（Supabase・Stripe・app_env）。app_envのデフォルトはproduction。developmentにするとSwagger UIが有効になる
 - `backend/dependencies/auth.py` — 未使用（コードは保持）
-- `backend/routers/analysis.py` — `/api/v1/analyze` エンドポイント。認証不要・全解析（PRNU含む）を全ユーザーに実行。レート制限：10回/分/IP
+- `backend/routers/analysis.py` — `/api/v1/analyze` エンドポイント。認証不要・全解析を全ユーザーに実行。レート制限：10回/分/IP
 - `backend/routers/compare.py` — `/api/v1/compare` エンドポイント。認証不要。レート制限：5回/分/IP
 - `backend/routers/stripe_router.py` — 未使用（コードは保持）
 - `backend/services/exif_service.py` — Exifメタデータ解析・AIツール署名チェック。値が存在するフィールドのみ日本語ラベルで表示。メタデータなし→スコア0.6（カメラ情報の完全欠如はAI疑い）
 - `backend/services/ela_service.py` — ELA解析（局所ホットスポット検出含む）
-- `backend/services/texture_service.py` — 局所テクスチャ分散マップ。不自然に滑らかな領域を赤でハイライト（AI生成画像に特有）。可視化は分散閾値20。スコアはCV方式：smooth（mean_var/150）× uniform（cv/1.5）の積。SDなど質感があるAI画像も均一性で判別可能
-- `backend/services/noise_service.py` — ノイズレベル解析。ノイズが少なすぎる領域を赤でハイライト（AI生成画像に特有）。可視化はノイズ分散閾値1。スコアはCV方式：low_noise（mean/5）× uniform（cv/2）の積
-- `backend/services/background_distortion_service.py` — 背景の歪み検出。勾配方向のCircular varianceをブロック単位で計算し、周囲と比べて散乱が大きい（歪んでいる）ブロックを赤でハイライト。Liquify系変形加工に有効
-- `backend/services/texture_uniformity_service.py` — テクスチャの均一化検出。LaplacianでHF成分を計測し、HSVベースのスキンマスクで肌色領域に絞り込んで過剰平滑化を検出。美容アプリの平滑化処理に有効
-- `backend/services/lighting_inconsistency_service.py` — 光源・影の不整合検出。Sobelで各ブロックの支配的な勾配方向を推定し、画像全体のグローバル光源方向との角度差をCircular distanceで計算
-- `backend/services/composite_boundary_service.py` — 切り貼り・合成の痕跡検出。JPEG quality=75で再圧縮しELA誤差を計算し、Canny edgeの近傍でELAが高い=合成境界として検出。スタンプ・切り貼りに有効
+- `backend/services/texture_service.py` — 局所テクスチャ分散マップ。smoothness=1.0-min(var/20,1.0)で各8x8ブロックの滑らかさを計算。閾値0.7を超えたブロックを赤でハイライト。スコア=赤ブロック割合
+- `backend/services/noise_service.py` — ノイズレベル解析。Gaussianブラーとの差分でノイズ残差を抽出。noise_map=1.0-min(var/5,1.0)で各16x16ブロックのノイズ量を計算。閾値0.7を超えたブロックを赤でハイライト。スコア=赤ブロック割合
+- `backend/services/background_distortion_service.py` — 背景の歪み検出。各ブロックの支配的な勾配方向を計算し、隣接ブロックとの角度差（Circular distance）が閾値0.5（90度）を超えた箇所を赤でハイライト。スコア=赤ブロック割合
+- `backend/services/texture_uniformity_service.py` — テクスチャの均一化検出。LaplacianでHF成分を計測し、HSVベースのスキンマスクで肌色領域を検出。スキン内のZ値が閾値0.5を超えた（平均より滑らかな）ブロックを赤でハイライト。スキン未検出時はスコア0。スコア=赤ブロック割合
+- `backend/services/lighting_inconsistency_service.py` — 光源・影の不整合検出。Sobelで各64x64ブロックの支配的な勾配方向を推定し、画像全体のグローバル角度との差が閾値0.5（90度）を超えた箇所を赤でハイライト。スコア=赤ブロック割合
+- `backend/services/composite_boundary_service.py` — 切り貼り・合成の痕跡検出。JPEG quality=75で再圧縮しELA誤差の絶対値を計算。各16x16ブロックの平均ELAが閾値5を超えた箇所を赤でハイライト。スコア=赤ブロック割合
 - `backend/services/diff_service.py` — 2枚の画像の差分を赤でハイライト。label="diff"。詳細に差異率（%）と判定テキストを表示
 - `backend/services/similarity_service.py` — SSIM＋パーセプチュアルハッシュで類似度をパーセント表示。label="similarity"。score=similarity/100で実際の類似度を反映
 - `backend/requirements.txt` — 全依存パッケージ（slowapi==0.1.9追加済み）
